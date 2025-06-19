@@ -7,123 +7,124 @@
              x:Class="CustomerSuccessCRM.Desktop.Views.Produtos.ProdutosView"
              x:DataType="vm:ProdutosViewModel">
     
-    <Grid RowDefinitions="Auto,*">
-        <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="20">
-            <TextBlock Text="Produtos" Classes="h2"/>
-            <TextBlock Text="Gerencie seu catálogo de produtos" Classes="h3" Margin="0,5,0,0"/>
-        </StackPanel>
+    <Grid>
+        <Grid RowDefinitions="Auto,*">
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Margin="20">
+                <TextBlock Text="Produtos" Classes="h2"/>
+                <TextBlock Text="Gerencie seu catálogo de produtos" Classes="h3" Margin="0,5,0,0"/>
+            </StackPanel>
 
-        <!-- Content -->
-        <Border Grid.Row="1" Classes="card" Margin="20">
-            <Grid RowDefinitions="Auto,*">
-                <!-- Toolbar -->
-                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,20">
-                    <TextBox Grid.Column="0" 
-                            Text="{Binding SearchTerm}"
-                            Watermark="Buscar produtos..."
-                            Margin="0,0,10,0"/>
-                    
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                        <Button Command="{Binding SearchCommand}">
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <PathIcon Data="{StaticResource search_regular}"/>
-                                <TextBlock Text="Buscar"/>
-                            </StackPanel>
-                        </Button>
+            <!-- Content -->
+            <Border Grid.Row="1" Classes="card" Margin="20">
+                <Grid RowDefinitions="Auto,*">
+                    <!-- Toolbar -->
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,20">
+                        <TextBox Grid.Column="0" 
+                                Text="{Binding SearchTerm}"
+                                Watermark="Buscar produtos..."
+                                Margin="0,0,10,0"/>
                         
-                        <Button Command="{Binding StartAddCommand}">
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <PathIcon Data="{StaticResource add_regular}"/>
-                                <TextBlock Text="Novo Produto"/>
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-                </Grid>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                            <Button Command="{Binding SearchCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <PathIcon Data="{StaticResource search_regular}"/>
+                                    <TextBlock Text="Buscar"/>
+                                </StackPanel>
+                            </Button>
+                            
+                            <Button Command="{Binding StartAddCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <PathIcon Data="{StaticResource add_regular}"/>
+                                    <TextBlock Text="Novo Produto"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
 
-                <!-- Data Grid -->
-                <DataGrid Grid.Row="1"
-                          ItemsSource="{Binding Produtos}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          GridLinesVisibility="All">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nome" 
-                                          Binding="{Binding Nome}" 
-                                          Width="*"/>
-                        <DataGridTextColumn Header="Descrição" 
-                                          Binding="{Binding Descricao}" 
-                                          Width="2*"/>
-                        <DataGridTextColumn Header="Preço" 
-                                          Binding="{Binding Preco, StringFormat=C}" 
-                                          Width="*"/>
-                        <DataGridTemplateColumn Header="Ações" Width="Auto">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Spacing="5">
-                                        <Button Command="{Binding $parent[UserControl].((vm:ProdutosViewModel)DataContext).StartEditCommand}"
-                                                CommandParameter="{Binding}">
-                                            <PathIcon Data="{StaticResource edit_regular}"/>
-                                        </Button>
-                                        <Button Command="{Binding $parent[UserControl].((vm:ProdutosViewModel)DataContext).DeleteCommand}"
-                                                CommandParameter="{Binding}">
-                                            <PathIcon Data="{StaticResource delete_regular}"/>
-                                        </Button>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Grid>
-        </Border>
+                    <!-- Data Grid -->
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding Produtos}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              GridLinesVisibility="All">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Nome" 
+                                              Binding="{Binding Nome}" 
+                                              Width="*"/>
+                            <DataGridTextColumn Header="Descrição" 
+                                              Binding="{Binding Descricao}" 
+                                              Width="2*"/>
+                            <DataGridTextColumn Header="Preço" 
+                                              Binding="{Binding PrecoBase, StringFormat=C}" 
+                                              Width="*"/>
+                            <DataGridTemplateColumn Header="Ações" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <Button Command="{Binding $parent[UserControl].((vm:ProdutosViewModel)DataContext).StartEditCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <PathIcon Data="{StaticResource edit_regular}"/>
+                                            </Button>
+                                            <Button Command="{Binding $parent[UserControl].((vm:ProdutosViewModel)DataContext).DeleteCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <PathIcon Data="{StaticResource delete_regular}"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Edit Dialog -->
+        <Panel IsVisible="{Binding IsEditing}">
+            <Rectangle Fill="Black" Opacity="0.5"/>
+            <Border Classes="card" Width="400" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="Novo Produto" Classes="h2" Margin="0,0,0,20"/>
+
+                    <TextBox Text="{Binding NovoProduto.Nome}" 
+                            Watermark="Nome do produto"/>
+                    
+                    <TextBox Text="{Binding NovoProduto.Descricao}" 
+                            Watermark="Descrição"
+                            AcceptsReturn="True"
+                            TextWrapping="Wrap"
+                            Height="100"/>
+                    
+                    <NumericUpDown Value="{Binding NovoProduto.PrecoBase}"
+                                  Watermark="Preço"
+                                  FormatString="C"
+                                  Minimum="0"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0" Spacing="10">
+                        <Button Command="{Binding CancelCommand}">Cancelar</Button>
+                        <Button Command="{Binding SaveCommand}">Salvar</Button>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding ErrorMessage}"
+                              IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                              Foreground="Red"
+                              TextWrapping="Wrap"
+                              Margin="0,10,0,0"/>
+                </StackPanel>
+            </Border>
+        </Panel>
+
+        <!-- Loading Overlay -->
+        <Panel IsVisible="{Binding IsLoading}">
+            <Rectangle Fill="Black" Opacity="0.5"/>
+            <ProgressBar IsIndeterminate="True" Width="200"/>
+        </Panel>
     </Grid>
 
-    <!-- Edit Dialog -->
     <UserControl.Styles>
         <Style Selector="TextBox">
             <Setter Property="Margin" Value="0,5"/>
         </Style>
     </UserControl.Styles>
-
-    <Panel IsVisible="{Binding IsEditing}">
-        <Rectangle Fill="Black" Opacity="0.5"/>
-        <Border Classes="card" Width="400" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <StackPanel>
-                <TextBlock Text="{Binding SelectedProduto, StringFormat='Editar {0}', FallbackValue='Novo Produto'}" 
-                          Classes="h2" Margin="0,0,0,20"/>
-
-                <TextBox Text="{Binding SelectedProduto.Nome ?? NovoProduto.Nome}" 
-                        Watermark="Nome do produto"/>
-                
-                <TextBox Text="{Binding SelectedProduto.Descricao ?? NovoProduto.Descricao}" 
-                        Watermark="Descrição"
-                        AcceptsReturn="True"
-                        TextWrapping="Wrap"
-                        Height="100"/>
-                
-                <NumericUpDown Value="{Binding SelectedProduto.Preco ?? NovoProduto.Preco}"
-                              Watermark="Preço"
-                              FormatString="C"
-                              Minimum="0"/>
-
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0" Spacing="10">
-                    <Button Command="{Binding CancelCommand}">Cancelar</Button>
-                    <Button Command="{Binding SaveCommand}">Salvar</Button>
-                </StackPanel>
-
-                <TextBlock Text="{Binding ErrorMessage}"
-                          IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                          Foreground="Red"
-                          TextWrapping="Wrap"
-                          Margin="0,10,0,0"/>
-            </StackPanel>
-        </Border>
-    </Panel>
-
-    <!-- Loading Overlay -->
-    <Panel IsVisible="{Binding IsLoading}">
-        <Rectangle Fill="Black" Opacity="0.5"/>
-        <ProgressBar IsIndeterminate="True" Width="200"/>
-    </Panel>
 </UserControl> 

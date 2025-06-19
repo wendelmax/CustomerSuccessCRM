@@ -7,167 +7,168 @@
              x:Class="CustomerSuccessCRM.Desktop.Views.Metas.MetasView"
              x:DataType="vm:MetasViewModel">
     
-    <Grid RowDefinitions="Auto,*">
-        <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="20">
-            <TextBlock Text="Metas" Classes="h2"/>
-            <TextBlock Text="Acompanhe e gerencie suas metas" Classes="h3" Margin="0,5,0,0"/>
-        </StackPanel>
+    <Grid>
+        <Grid RowDefinitions="Auto,*">
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Margin="20">
+                <TextBlock Text="Metas" Classes="h2"/>
+                <TextBlock Text="Acompanhe e gerencie suas metas" Classes="h3" Margin="0,5,0,0"/>
+            </StackPanel>
 
-        <!-- Content -->
-        <Border Grid.Row="1" Classes="card" Margin="20">
-            <Grid RowDefinitions="Auto,*">
-                <!-- Toolbar -->
-                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,20">
-                    <TextBox Grid.Column="0" 
-                            Text="{Binding SearchTerm}"
-                            Watermark="Buscar metas..."
-                            Margin="0,0,10,0"/>
-                    
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                        <Button Command="{Binding SearchCommand}">
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <PathIcon Data="{StaticResource search_regular}"/>
-                                <TextBlock Text="Buscar"/>
-                            </StackPanel>
-                        </Button>
+            <!-- Content -->
+            <Border Grid.Row="1" Classes="card" Margin="20">
+                <Grid RowDefinitions="Auto,*">
+                    <!-- Toolbar -->
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,20">
+                        <TextBox Grid.Column="0" 
+                                Text="{Binding SearchTerm}"
+                                Watermark="Buscar metas..."
+                                Margin="0,0,10,0"/>
                         
-                        <Button Command="{Binding StartAddCommand}">
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <PathIcon Data="{StaticResource add_regular}"/>
-                                <TextBlock Text="Nova Meta"/>
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-                </Grid>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                            <Button Command="{Binding SearchCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <PathIcon Data="{StaticResource search_regular}"/>
+                                    <TextBlock Text="Buscar"/>
+                                </StackPanel>
+                            </Button>
+                            
+                            <Button Command="{Binding StartAddCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <PathIcon Data="{StaticResource add_regular}"/>
+                                    <TextBlock Text="Nova Meta"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
 
-                <!-- Data Grid -->
-                <DataGrid Grid.Row="1"
-                          ItemsSource="{Binding Metas}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          GridLinesVisibility="All">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nome" 
-                                          Binding="{Binding Nome}" 
-                                          Width="*"/>
-                        <DataGridTextColumn Header="Descrição" 
-                                          Binding="{Binding Descricao}" 
-                                          Width="2*"/>
-                        <DataGridTextColumn Header="Valor" 
-                                          Binding="{Binding Valor, StringFormat=N2}" 
-                                          Width="*"/>
-                        <DataGridTemplateColumn Header="Progresso" Width="2*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Grid ColumnDefinitions="*,Auto" Margin="5">
-                                        <ProgressBar Value="{Binding Progresso}" 
-                                                   Maximum="{Binding Valor}"
-                                                   Height="20"/>
-                                        <TextBlock Grid.Column="1" 
-                                                 Text="{Binding Progresso, StringFormat='{}{0:N2}'}"
-                                                 VerticalAlignment="Center"
-                                                 Margin="10,0,0,0"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="Status" 
-                                          Binding="{Binding Status}" 
-                                          Width="*"/>
-                        <DataGridTemplateColumn Header="Ações" Width="Auto">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Spacing="5">
-                                        <Button Command="{Binding $parent[UserControl].((vm:MetasViewModel)DataContext).StartEditCommand}"
-                                                CommandParameter="{Binding}">
-                                            <PathIcon Data="{StaticResource edit_regular}"/>
-                                        </Button>
-                                        <Button Command="{Binding $parent[UserControl].((vm:MetasViewModel)DataContext).ConcluirMetaCommand}"
-                                                CommandParameter="{Binding}">
-                                            <PathIcon Data="{StaticResource checkmark_regular}"/>
-                                        </Button>
-                                        <Button Command="{Binding $parent[UserControl].((vm:MetasViewModel)DataContext).DeleteCommand}"
-                                                CommandParameter="{Binding}">
-                                            <PathIcon Data="{StaticResource delete_regular}"/>
-                                        </Button>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Grid>
-        </Border>
+                    <!-- Data Grid -->
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding Metas}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              GridLinesVisibility="All">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Nome" 
+                                              Binding="{Binding Nome}" 
+                                              Width="*"/>
+                            <DataGridTextColumn Header="Descrição" 
+                                              Binding="{Binding Descricao}" 
+                                              Width="2*"/>
+                            <DataGridTextColumn Header="Valor" 
+                                              Binding="{Binding Valor, StringFormat=N2}" 
+                                              Width="*"/>
+                            <DataGridTemplateColumn Header="Progresso" Width="2*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="*,Auto" Margin="5">
+                                            <ProgressBar Value="{Binding Progresso}" 
+                                                       Maximum="{Binding Valor}"
+                                                       Height="20"/>
+                                            <TextBlock Grid.Column="1" 
+                                                     Text="{Binding Progresso, StringFormat='{}{0:N2}'}"
+                                                     VerticalAlignment="Center"
+                                                     Margin="10,0,0,0"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Status" 
+                                              Binding="{Binding Status}" 
+                                              Width="*"/>
+                            <DataGridTemplateColumn Header="Ações" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <Button Command="{Binding $parent[UserControl].((vm:MetasViewModel)DataContext).StartEditCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <PathIcon Data="{StaticResource edit_regular}"/>
+                                            </Button>
+                                            <Button Command="{Binding $parent[UserControl].((vm:MetasViewModel)DataContext).ConcluirMetaCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <PathIcon Data="{StaticResource checkmark_regular}"/>
+                                            </Button>
+                                            <Button Command="{Binding $parent[UserControl].((vm:MetasViewModel)DataContext).DeleteCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <PathIcon Data="{StaticResource delete_regular}"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Edit Dialog -->
+        <Panel IsVisible="{Binding IsEditing}">
+            <Rectangle Fill="Black" Opacity="0.5"/>
+            <Border Classes="card" Width="500" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="Nova Meta" Classes="h2" Margin="0,0,0,20"/>
+
+                    <TextBox Text="{Binding NovaMeta.Nome}" 
+                            Watermark="Nome da meta"/>
+                    
+                    <TextBox Text="{Binding NovaMeta.Descricao}" 
+                            Watermark="Descrição"
+                            AcceptsReturn="True"
+                            TextWrapping="Wrap"
+                            Height="100"/>
+                    
+                    <NumericUpDown Value="{Binding NovaMeta.Valor}"
+                                  Watermark="Valor da meta"
+                                  FormatString="N2"
+                                  Minimum="0"/>
+
+                    <NumericUpDown Value="{Binding Progresso}"
+                                  Watermark="Progresso atual"
+                                  FormatString="N2"
+                                  Minimum="0"
+                                  IsVisible="{Binding SelectedMeta, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" Margin="0,10">
+                        <TextBlock Text="Data Início" Grid.Row="0" Grid.Column="0"/>
+                        <CalendarDatePicker Grid.Row="1" Grid.Column="0"
+                                          SelectedDate="{Binding NovaMeta.DataInicio}"
+                                          Margin="0,0,5,0"/>
+                        
+                        <TextBlock Text="Data Fim" Grid.Row="0" Grid.Column="1"/>
+                        <CalendarDatePicker Grid.Row="1" Grid.Column="1"
+                                          SelectedDate="{Binding NovaMeta.DataFim}"
+                                          Margin="5,0,0,0"/>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0" Spacing="10">
+                        <Button Command="{Binding CancelCommand}">Cancelar</Button>
+                        <Button Command="{Binding AtualizarProgressoCommand}"
+                                IsVisible="{Binding SelectedMeta, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            Atualizar Progresso
+                        </Button>
+                        <Button Command="{Binding SaveCommand}">Salvar</Button>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding ErrorMessage}"
+                              IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                              Foreground="Red"
+                              TextWrapping="Wrap"
+                              Margin="0,10,0,0"/>
+                </StackPanel>
+            </Border>
+        </Panel>
+
+        <!-- Loading Overlay -->
+        <Panel IsVisible="{Binding IsLoading}">
+            <Rectangle Fill="Black" Opacity="0.5"/>
+            <ProgressBar IsIndeterminate="True" Width="200"/>
+        </Panel>
     </Grid>
 
-    <!-- Edit Dialog -->
     <UserControl.Styles>
         <Style Selector="TextBox">
             <Setter Property="Margin" Value="0,5"/>
         </Style>
     </UserControl.Styles>
-
-    <Panel IsVisible="{Binding IsEditing}">
-        <Rectangle Fill="Black" Opacity="0.5"/>
-        <Border Classes="card" Width="500" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <StackPanel>
-                <TextBlock Text="{Binding SelectedMeta, StringFormat='Editar {0}', FallbackValue='Nova Meta'}" 
-                          Classes="h2" Margin="0,0,0,20"/>
-
-                <TextBox Text="{Binding SelectedMeta.Nome ?? NovaMeta.Nome}" 
-                        Watermark="Nome da meta"/>
-                
-                <TextBox Text="{Binding SelectedMeta.Descricao ?? NovaMeta.Descricao}" 
-                        Watermark="Descrição"
-                        AcceptsReturn="True"
-                        TextWrapping="Wrap"
-                        Height="100"/>
-                
-                <NumericUpDown Value="{Binding SelectedMeta.Valor ?? NovaMeta.Valor}"
-                              Watermark="Valor da meta"
-                              FormatString="N2"
-                              Minimum="0"/>
-
-                <NumericUpDown Value="{Binding Progresso}"
-                              Watermark="Progresso atual"
-                              FormatString="N2"
-                              Minimum="0"
-                              IsVisible="{Binding SelectedMeta, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" Margin="0,10">
-                    <TextBlock Text="Data Início" Grid.Row="0" Grid.Column="0"/>
-                    <CalendarDatePicker Grid.Row="1" Grid.Column="0"
-                                      SelectedDate="{Binding SelectedMeta.DataInicio ?? NovaMeta.DataInicio}"
-                                      Margin="0,0,5,0"/>
-                    
-                    <TextBlock Text="Data Fim" Grid.Row="0" Grid.Column="1"/>
-                    <CalendarDatePicker Grid.Row="1" Grid.Column="1"
-                                      SelectedDate="{Binding SelectedMeta.DataFim ?? NovaMeta.DataFim}"
-                                      Margin="5,0,0,0"/>
-                </Grid>
-
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0" Spacing="10">
-                    <Button Command="{Binding CancelCommand}">Cancelar</Button>
-                    <Button Command="{Binding AtualizarProgressoCommand}"
-                            IsVisible="{Binding SelectedMeta, Converter={x:Static ObjectConverters.IsNotNull}}">
-                        Atualizar Progresso
-                    </Button>
-                    <Button Command="{Binding SaveCommand}">Salvar</Button>
-                </StackPanel>
-
-                <TextBlock Text="{Binding ErrorMessage}"
-                          IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                          Foreground="Red"
-                          TextWrapping="Wrap"
-                          Margin="0,10,0,0"/>
-            </StackPanel>
-        </Border>
-    </Panel>
-
-    <!-- Loading Overlay -->
-    <Panel IsVisible="{Binding IsLoading}">
-        <Rectangle Fill="Black" Opacity="0.5"/>
-        <ProgressBar IsIndeterminate="True" Width="200"/>
-    </Panel>
 </UserControl> 

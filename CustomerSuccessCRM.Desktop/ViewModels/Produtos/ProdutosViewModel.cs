@@ -73,9 +73,15 @@ public partial class ProdutosViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = string.Empty;
 
-            var produtos = await _produtoService.BuscarAsync(SearchTerm);
+            // Por enquanto, vamos filtrar localmente
+            var produtos = await _produtoService.ListarTodosAsync();
+            var produtosFiltrados = produtos.Where(p => 
+                p.Nome.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                p.Descricao?.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) == true
+            ).ToList();
+            
             Produtos.Clear();
-            foreach (var produto in produtos)
+            foreach (var produto in produtosFiltrados)
             {
                 Produtos.Add(produto);
             }
@@ -112,7 +118,7 @@ public partial class ProdutosViewModel : ViewModelBase
             }
             else
             {
-                await _produtoService.AdicionarAsync(NovoProduto);
+                await _produtoService.CadastrarAsync(NovoProduto);
             }
 
             IsEditing = false;
@@ -152,7 +158,7 @@ public partial class ProdutosViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = string.Empty;
 
-            await _produtoService.ExcluirAsync(produto.Id);
+            await _produtoService.DeletarAsync(produto.Id);
             await LoadProdutos();
         }
         catch (Exception ex)

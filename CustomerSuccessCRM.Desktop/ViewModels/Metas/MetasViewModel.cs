@@ -76,9 +76,15 @@ public partial class MetasViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = string.Empty;
 
-            var metas = await _metaService.BuscarAsync(SearchTerm);
+            // Por enquanto, vamos filtrar localmente
+            var metas = await _metaService.ListarTodasAsync();
+            var metasFiltradas = metas.Where(m => 
+                m.Nome.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                m.Descricao?.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) == true
+            ).ToList();
+            
             Metas.Clear();
-            foreach (var meta in metas)
+            foreach (var meta in metasFiltradas)
             {
                 Metas.Add(meta);
             }
@@ -120,7 +126,7 @@ public partial class MetasViewModel : ViewModelBase
             }
             else
             {
-                await _metaService.AdicionarAsync(NovaMeta);
+                await _metaService.CadastrarAsync(NovaMeta);
             }
 
             IsEditing = false;
@@ -161,7 +167,7 @@ public partial class MetasViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = string.Empty;
 
-            await _metaService.ExcluirAsync(meta.Id);
+            await _metaService.DeletarAsync(meta.Id);
             await LoadMetas();
         }
         catch (Exception ex)
@@ -184,24 +190,7 @@ public partial class MetasViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = string.Empty;
 
-            SelectedMeta.Progresso = Progresso;
-            
-            // Atualizar status baseado no progresso
-            if (Progresso >= SelectedMeta.Valor)
-            {
-                SelectedMeta.Status = StatusMeta.Concluida;
-                SelectedMeta.DataConclusao = DateTime.Now;
-            }
-            else if (DateTime.Now > SelectedMeta.DataFim)
-            {
-                SelectedMeta.Status = StatusMeta.Atrasada;
-            }
-            else
-            {
-                SelectedMeta.Status = StatusMeta.EmAndamento;
-            }
-
-            await _metaService.AtualizarAsync(SelectedMeta);
+            await _metaService.AtualizarProgressoAsync(SelectedMeta.Id, Progresso);
             await LoadMetas();
         }
         catch (Exception ex)
@@ -222,11 +211,7 @@ public partial class MetasViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = string.Empty;
 
-            meta.Status = StatusMeta.Concluida;
-            meta.DataConclusao = DateTime.Now;
-            meta.Progresso = meta.Valor; // Considera 100% concluída
-
-            await _metaService.AtualizarAsync(meta);
+            await _metaService.AtualizarProgressoAsync(meta.Id, meta.Valor);
             await LoadMetas();
         }
         catch (Exception ex)
