@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using CustomerSuccessCRM.Lib.Data;
 using CustomerSuccessCRM.Lib.Repositories;
@@ -7,10 +6,6 @@ using CustomerSuccessCRM.Lib.Services.Contracts;
 using CustomerSuccessCRM.Lib.Services.Implementations;
 using CustomerSuccessCRM.Lib.Services.Strategies;
 using Microsoft.Extensions.Configuration;
-using iText.Kernel.Pdf;
-using iText.Layout;
-using MediatR;
-using System.Reflection;
 
 namespace CustomerSuccessCRM.Lib.Configuration
 {
@@ -27,7 +22,7 @@ namespace CustomerSuccessCRM.Lib.Configuration
             services.Configure<ProdutoSettings>(configuration.GetSection("Produto"));
 
             // MediatR
-            services.AddMediatR(typeof(ServiceCollectionExtensions).Assembly);
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ServiceCollectionExtensions).Assembly));
 
             // Serviços
             services.AddScoped<ICrmService, CrmService>();
@@ -69,30 +64,5 @@ namespace CustomerSuccessCRM.Lib.Configuration
 
             return services;
         }
-    }
-
-    public class EmailSettings
-    {
-        public string SmtpServer { get; set; } = string.Empty;
-        public int SmtpPort { get; set; }
-        public string SmtpUsername { get; set; } = string.Empty;
-        public string SmtpPassword { get; set; } = string.Empty;
-        public bool UseSsl { get; set; }
-        public string FromEmail { get; set; } = string.Empty;
-        public string FromName { get; set; } = string.Empty;
-    }
-
-    public class StorageSettings
-    {
-        public string BasePath { get; set; } = string.Empty;
-        public long MaxFileSize { get; set; }
-        public string[] AllowedFileTypes { get; set; } = Array.Empty<string>();
-    }
-
-    public class NotificationSettings
-    {
-        public bool EnableEmailNotifications { get; set; }
-        public bool EnablePushNotifications { get; set; }
-        public string[] NotificationRecipients { get; set; } = Array.Empty<string>();
     }
 } 

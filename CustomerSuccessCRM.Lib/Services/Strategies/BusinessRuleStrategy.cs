@@ -1,5 +1,7 @@
 using CustomerSuccessCRM.Lib.Models;
 using CustomerSuccessCRM.Lib.Services.Contracts;
+using CustomerSuccessCRM.Lib.Configuration;
+using CustomerSuccessCRM.Lib.Repositories;
 using Microsoft.Extensions.Options;
 
 namespace CustomerSuccessCRM.Lib.Services.Strategies
@@ -17,11 +19,11 @@ namespace CustomerSuccessCRM.Lib.Services.Strategies
 
     public class BusinessRuleStrategy : IBusinessRuleStrategy
     {
-        private readonly ProdutoSettings _produtoSettings;
+        private readonly CustomerSuccessCRM.Lib.Configuration.ProdutoSettings _produtoSettings;
         private readonly IProdutoRepository _produtoRepository;
 
         public BusinessRuleStrategy(
-            IOptions<ProdutoSettings> produtoSettings,
+            IOptions<CustomerSuccessCRM.Lib.Configuration.ProdutoSettings> produtoSettings,
             IProdutoRepository produtoRepository)
         {
             _produtoSettings = produtoSettings.Value;
@@ -164,7 +166,7 @@ namespace CustomerSuccessCRM.Lib.Services.Strategies
             var percentualDesconto = (valorDesconto / valorOriginal) * 100;
 
             // Validar se está dentro do limite permitido
-            if (percentualDesconto > _produtoSettings.MaxDiscountPercentage)
+            if (percentualDesconto > this._produtoSettings.MaxDiscountPercentage)
                 return false;
 
             return true;

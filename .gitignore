@@ -404,3 +404,162 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Arquivos e diretórios específicos do .NET
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+
+# Visual Studio Code
+.vscode/
+.vs/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio
+.vs/
+*.ncrunch*
+*.nvuser
+*.nupkg
+*.pfx
+*.snk
+
+# Rider
+.idea/
+*.sln.iml
+
+# User-specific files
+*.rsuser
+*.dtbcache.v2
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+logs/
+
+# Arquivos temporários
+[Tt]emp/
+*.tmp
+*.temp
+
+# Arquivos de teste
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# Arquivos de publicação
+*.Publish.xml
+*.pubxml
+*.publishproj
+
+# Arquivos de backup
+*.[Bb]ak
+*.bak
+*.[Bb]ackup
+
+# Arquivos de ambiente
+.env
+.env.*
+appsettings.*.json
+!appsettings.json
+!appsettings.Example.json
+
+# Arquivos de dependências
+node_modules/
+bower_components/
+wwwroot/lib/
+
+# Arquivos de cache
+*.cache
+*.cached
+
+# Arquivos de análise de código
+*.ReSharper*
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Arquivos de build do Visual Studio
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp_proj
+*_wpftmp.csproj
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# NuGet
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.assets.json
+*.nuget.cache
+
+# Arquivos específicos do Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Arquivos específicos do macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Arquivos específicos do Linux
+*~
+.directory
+.Trash-*
+
+# Arquivos específicos do projeto
+CustomerSuccessCRM.Web/crm.db
+CustomerSuccessCRM.Web/crm.db-shm
+CustomerSuccessCRM.Web/crm.db-wal

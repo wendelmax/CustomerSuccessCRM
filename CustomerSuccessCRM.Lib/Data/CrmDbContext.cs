@@ -3,12 +3,8 @@ using CustomerSuccessCRM.Lib.Models;
 
 namespace CustomerSuccessCRM.Lib.Data
 {
-    public class CrmDbContext : DbContext
+    public class CrmDbContext(DbContextOptions<CrmDbContext> options) : DbContext(options)
     {
-        public CrmDbContext(DbContextOptions<CrmDbContext> options) : base(options)
-        {
-        }
-
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Interacao> Interacoes { get; set; }
         public DbSet<Oportunidade> Oportunidades { get; set; }
