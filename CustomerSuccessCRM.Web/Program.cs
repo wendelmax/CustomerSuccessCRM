@@ -7,8 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Configurar serviços do CRM
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = DatabaseConfig.GetDatabasePath();
 builder.Services.AddCustomerSuccessCrmServices(connectionString);
 
 var app = builder.Build();
@@ -17,7 +16,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<CrmDbContext>();
-    context.Database.EnsureCreated();
+    DatabaseConfig.EnsureDatabaseExists(context);
 }
 
 // Configure the HTTP request pipeline.

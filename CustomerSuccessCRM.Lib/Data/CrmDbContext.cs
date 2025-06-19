@@ -3,8 +3,16 @@ using CustomerSuccessCRM.Lib.Models;
 
 namespace CustomerSuccessCRM.Lib.Data
 {
-    public class CrmDbContext(DbContextOptions<CrmDbContext> options) : DbContext(options)
+    public class CrmDbContext : DbContext
     {
+        public CrmDbContext(DbContextOptions<CrmDbContext> options) : base(options)
+        {
+        }
+
+        public CrmDbContext()
+        {
+        }
+
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Produto> Produtos { get; set; }
         public DbSet<Meta> Metas { get; set; }
@@ -74,8 +82,7 @@ namespace CustomerSuccessCRM.Lib.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                // Configuração padrão para SQLite (usado apenas se não for configurado externamente)
-                optionsBuilder.UseSqlite("Data Source=CustomerSuccessCRM.db");
+                DatabaseConfig.ConfigureDatabase(optionsBuilder);
             }
         }
     }
