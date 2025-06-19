@@ -9,60 +9,45 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-users mr-1"></i>
+                    <span class="icon-users"></span>
                     Lista de Clientes
                 </h3>
                 <div class="card-tools">
                     <a asp-action="Create" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus"></i> Novo Cliente
+                        <span class="icon-plus"></span> Novo Cliente
                     </a>
                 </div>
             </div>
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <form method="get" class="form-inline">
-                            <div class="input-group">
-                                <input type="text" name="searchString" class="form-control" placeholder="Buscar por nome ou empresa..." value="@ViewData["CurrentFilter"]">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-default">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
+                        <div class="input-group">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome ou empresa...">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-default">
+                                    <span class="icon-search"></span>
+                                </button>
                             </div>
-                        </form>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="float-right">
-                            <form method="get" class="form-inline">
-                                <select class="form-control form-control-sm" name="statusFilter" onchange="this.form.submit()">
-                                    <option value="">Todos os Status</option>
-                                    @{
-                                        var statusFilter = ViewData["StatusFilter"]?.ToString();
-                                        var ativoSelected = statusFilter == "Ativo" ? "selected" : "";
-                                        var inativoSelected = statusFilter == "Inativo" ? "selected" : "";
-                                        var prospectoSelected = statusFilter == "Prospecto" ? "selected" : "";
-                                        var canceladoSelected = statusFilter == "Cancelado" ? "selected" : "";
-                                    }
-                                    <option value="Ativo" selected="@ativoSelected">Ativo</option>
-                                    <option value="Inativo" selected="@inativoSelected">Inativo</option>
-                                    <option value="Prospecto" selected="@prospectoSelected">Prospecto</option>
-                                    <option value="Cancelado" selected="@canceladoSelected">Cancelado</option>
-                                </select>
-                            </form>
+                            <select id="statusFilter" class="form-control form-control-sm">
+                                <option value="">Todos os Status</option>
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                                <option value="Prospecto">Prospecto</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
                         </div>
                     </div>
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
+                    <table id="clientesTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>
-                                    <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
-                                        Nome <i class="fas fa-sort"></i>
-                                    </a>
-                                </th>
+                                <th>Nome</th>
                                 <th>Empresa</th>
                                 <th>Email</th>
                                 <th>Telefone</th>
@@ -101,13 +86,13 @@
                                     <td>
                                         <div class="btn-group">
                                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Editar">
-                                                <i class="fas fa-edit"></i>
+                                                <span class="icon-edit"></span>
                                             </a>
                                             <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary" title="Detalhes">
-                                                <i class="fas fa-eye"></i>
+                                                <span class="icon-eye"></span>
                                             </a>
                                             <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" title="Excluir">
-                                                <i class="fas fa-trash"></i>
+                                                <span class="icon-trash"></span>
                                             </a>
                                         </div>
                                     </td>
@@ -120,15 +105,54 @@
                 @if (!Model.Any())
                 {
                     <div class="text-center py-4">
-                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <span class="icon-users" style="font-size: 3rem; color: #ccc;"></span>
                         <h5 class="text-muted">Nenhum cliente encontrado</h5>
                         <p class="text-muted">Comece adicionando seu primeiro cliente.</p>
                         <a asp-action="Create" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Adicionar Cliente
+                            <span class="icon-plus"></span> Adicionar Cliente
                         </a>
                     </div>
                 }
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var table = $('#clientesTable').DataTable({
+                "responsive": true,
+                "autoWidth": false,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
+                },
+                "order": [[0, "asc"]],
+                "columnDefs": [
+                    { "orderable": false, "targets": 5 }
+                ]
+            });
+
+            // Filtro de busca personalizado
+            $('#searchInput').on('keyup', function () {
+                table.search(this.value).draw();
+            });
+
+            // Filtro de status personalizado
+            $('#statusFilter').on('change', function () {
+                var status = $(this).val();
+                table.column(4).search(status).draw();
+            });
+        });
+    </script>
+}
+
+<style>
+    .icon-users::before { content: "👥"; }
+    .icon-plus::before { content: "➕"; }
+    .icon-search::before { content: "🔍"; }
+    .icon-sort::before { content: "↕️"; }
+    .icon-edit::before { content: "✏️"; }
+    .icon-eye::before { content: "👁️"; }
+    .icon-trash::before { content: "🗑️"; }
+</style> 

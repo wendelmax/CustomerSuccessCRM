@@ -4,10 +4,124 @@
     ViewData["Title"] = "Dashboard";
 }
 
+<style>
+    .info-box {
+        min-height: 100px;
+        background: #fff;
+        width: 100%;
+        box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+        border-radius: 0.25rem;
+        margin-bottom: 1rem;
+        display: flex;
+        cursor: pointer;
+        transition: all .3s ease;
+    }
+
+    .info-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 2px 5px rgba(0,0,0,.2);
+    }
+
+    .info-box-icon {
+        width: 80px;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .info-box-content {
+        padding: 1rem;
+        flex: 1;
+    }
+
+    .info-box-number {
+        display: block;
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
+
+    .info-box-text {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+        box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    }
+
+    .card-header {
+        background-color: transparent;
+        border-bottom: 1px solid rgba(0,0,0,.125);
+        padding: 0.75rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .valor-meta {
+        font-size: 2.5rem;
+        font-weight: 300;
+        color: #007bff;
+        margin: 1rem 0;
+    }
+
+    .status-meta {
+        padding: 1rem;
+        border-radius: 0.25rem;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .status-meta.concluida {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .status-meta.andamento {
+        background-color: #ffc107;
+        color: #000;
+    }
+
+    .table th {
+        border-top: none;
+    }
+
+    .produto-item {
+        padding: 1rem;
+        border-bottom: 1px solid #f4f4f4;
+    }
+
+    .produto-item:last-child {
+        border-bottom: none;
+    }
+
+    .produto-nome {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .produto-preco {
+        float: right;
+        color: #28a745;
+    }
+
+    .produto-descricao {
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+
 <div class="row">
     <div class="col-12 col-sm-6 col-md-3">
         <div class="info-box">
-            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-users"></i></span>
+            <div class="info-box-icon bg-info">👥</div>
             <div class="info-box-content">
                 <span class="info-box-text">Clientes</span>
                 <span class="info-box-number">@Model.TotalClientes</span>
@@ -16,7 +130,7 @@
     </div>
     <div class="col-12 col-sm-6 col-md-3">
         <div class="info-box">
-            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-bullseye"></i></span>
+            <div class="info-box-icon bg-success">🎯</div>
             <div class="info-box-content">
                 <span class="info-box-text">Metas</span>
                 <span class="info-box-number">@Model.TotalMetas</span>
@@ -25,7 +139,7 @@
     </div>
     <div class="col-12 col-sm-6 col-md-3">
         <div class="info-box">
-            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-comments"></i></span>
+            <div class="info-box-icon bg-warning">💬</div>
             <div class="info-box-content">
                 <span class="info-box-text">Interações</span>
                 <span class="info-box-number">@Model.TotalInteracoes</span>
@@ -34,7 +148,7 @@
     </div>
     <div class="col-12 col-sm-6 col-md-3">
         <div class="info-box">
-            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-box"></i></span>
+            <div class="info-box-icon bg-danger">📦</div>
             <div class="info-box-content">
                 <span class="info-box-text">Produtos</span>
                 <span class="info-box-number">@Model.TotalProdutos</span>
@@ -45,53 +159,37 @@
 
 <div class="row">
     <div class="col-md-6">
-        <!-- AREA CHART -->
-        <div class="card card-primary">
+        <div class="card">
             <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-chart-area mr-1"></i>
-                    Valor das Metas
-                </h3>
+                <span class="icon-chart"></span>
+                <h3 class="card-title">Valor das Metas</h3>
             </div>
-            <div class="card-body">
-                <div class="chart">
-                    <div class="text-center">
-                        <h2 class="text-primary">R$ @Model.ValorTotalMetas.ToString("N2")</h2>
-                        <p class="text-muted">Valor total das metas ativas</p>
-                    </div>
+            <div class="card-body text-center">
+                <div class="valor-meta">
+                    R$ @Model.ValorTotalMetas.ToString("N2")
                 </div>
+                <p class="text-muted">Valor total das metas ativas</p>
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <!-- DONUT CHART -->
-        <div class="card card-success">
+        <div class="card">
             <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-chart-pie mr-1"></i>
-                    Status das Metas
-                </h3>
+                <span class="icon-target"></span>
+                <h3 class="card-title">Status das Metas</h3>
             </div>
             <div class="card-body">
-                <div class="chart">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="info-box bg-success">
-                                <span class="info-box-icon"><i class="fas fa-check"></i></span>
-                                <div class="info-box-content">
-                                    <span class="info-box-text">Concluídas</span>
-                                    <span class="info-box-number">@Model.MetasConcluidas</span>
-                                </div>
-                            </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="status-meta concluida">
+                            <h4>Concluídas</h4>
+                            <h2>@Model.MetasConcluidas</h2>
                         </div>
-                        <div class="col-6">
-                            <div class="info-box bg-warning">
-                                <span class="info-box-icon"><i class="fas fa-clock"></i></span>
-                                <div class="info-box-content">
-                                    <span class="info-box-text">Em Andamento</span>
-                                    <span class="info-box-number">@Model.MetasEmAndamento</span>
-                                </div>
-                            </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="status-meta andamento">
+                            <h4>Em Andamento</h4>
+                            <h2>@Model.MetasEmAndamento</h2>
                         </div>
                     </div>
                 </div>
@@ -102,17 +200,14 @@
 
 <div class="row">
     <div class="col-md-8">
-        <!-- TABLE: CLIENTES RECENTES -->
         <div class="card">
-            <div class="card-header border-transparent">
-                <h3 class="card-title">
-                    <i class="fas fa-users mr-1"></i>
-                    Clientes Recentes
-                </h3>
+            <div class="card-header">
+                <span class="icon-users"></span>
+                <h3 class="card-title">Clientes Recentes</h3>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table m-0">
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th>Nome</th>
@@ -131,9 +226,22 @@
                                         <td>@cliente.Empresa</td>
                                         <td>@cliente.Email</td>
                                         <td>
-                                            <span class="badge badge-@(cliente.Status == StatusCliente.Ativo ? "success" : "warning")">
-                                                @cliente.Status
-                                            </span>
+                                            @if (cliente.Status == StatusCliente.Ativo)
+                                            {
+                                                <span class="badge badge-success">Ativo</span>
+                                            }
+                                            else if (cliente.Status == StatusCliente.Prospecto)
+                                            {
+                                                <span class="badge badge-info">Prospecto</span>
+                                            }
+                                            else if (cliente.Status == StatusCliente.Inativo)
+                                            {
+                                                <span class="badge badge-warning">Inativo</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-danger">Cancelado</span>
+                                            }
                                         </td>
                                     </tr>
                                 }
@@ -148,76 +256,45 @@
                     </table>
                 </div>
             </div>
-            <div class="card-footer clearfix">
-                <a asp-controller="Clientes" asp-action="Index" class="btn btn-sm btn-secondary float-right">Ver Todos</a>
+            <div class="card-footer">
+                <a asp-controller="Clientes" asp-action="Index" class="btn btn-sm btn-primary float-right">
+                    Ver Todos os Clientes
+                </a>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <!-- PRODUCT LIST -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-box mr-1"></i>
-                    Produtos Mais Vendidos
-                </h3>
+                <span class="icon-box"></span>
+                <h3 class="card-title">Produtos Mais Vendidos</h3>
             </div>
             <div class="card-body p-0">
-                <ul class="products-list product-list-in-card pl-2 pr-2">
-                    @if (Model.ProdutosMaisVendidos != null && Model.ProdutosMaisVendidos.Any())
+                @if (Model.ProdutosMaisVendidos != null && Model.ProdutosMaisVendidos.Any())
+                {
+                    @foreach (var produto in Model.ProdutosMaisVendidos.Take(3))
                     {
-                        @foreach (var produto in Model.ProdutosMaisVendidos.Take(3))
-                        {
-                            <li class="item">
-                                <div class="product-info">
-                                    <a href="javascript:void(0)" class="product-title">
-                                        @produto.Nome
-                                        <span class="badge badge-warning float-right">R$ @produto.PrecoBase.ToString("N2")</span>
-                                    </a>
-                                    <span class="product-description">
-                                        @produto.Descricao
-                                    </span>
-                                </div>
-                            </li>
-                        }
-                    }
-                    else
-                    {
-                        <li class="item">
-                            <div class="product-info">
-                                <span class="product-description">Nenhum produto encontrado</span>
+                        <div class="produto-item">
+                            <div class="produto-nome">
+                                @produto.Nome
+                                <span class="produto-preco">R$ @produto.PrecoBase.ToString("N2")</span>
                             </div>
-                        </li>
+                            <div class="produto-descricao">@produto.Descricao</div>
+                        </div>
                     }
-                </ul>
+                }
+                else
+                {
+                    <div class="produto-item text-center">
+                        Nenhum produto encontrado
+                    </div>
+                }
             </div>
             <div class="card-footer text-center">
-                <a asp-controller="Produtos" asp-action="Index" class="uppercase">Ver Todos os Produtos</a>
+                <a asp-controller="Produtos" asp-action="Index" class="btn btn-sm btn-primary">
+                    Ver Todos os Produtos
+                </a>
             </div>
         </div>
     </div>
-</div>
-
-<style>
-    .border-left-primary {
-        border-left: 0.25rem solid #4e73df !important;
-    }
-    .border-left-success {
-        border-left: 0.25rem solid #1cc88a !important;
-    }
-    .border-left-info {
-        border-left: 0.25rem solid #36b9cc !important;
-    }
-    .border-left-warning {
-        border-left: 0.25rem solid #f6c23e !important;
-    }
-    .text-gray-300 {
-        color: #dddfeb !important;
-    }
-    .text-gray-800 {
-        color: #5a5c69 !important;
-    }
-    .text-xs {
-        font-size: 0.7rem;
-    }
-</style> 
+</div> 

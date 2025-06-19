@@ -5,24 +5,57 @@ using CustomerSuccessCRM.Web.ViewModels;
 
 namespace CustomerSuccessCRM.Web.Controllers
 {
-    public class DashboardController(
-        ClienteService clienteService,
-        ProdutoService produtoService,
-        MetaService metaService)
-        : Controller
+    public class DashboardController : Controller
     {
+        private readonly ClienteService _clienteService;
+        private readonly ProdutoService _produtoService;
+        private readonly MetaService _metaService;
+
+        public DashboardController(
+            ClienteService clienteService,
+            ProdutoService produtoService,
+            MetaService metaService)
+        {
+            _clienteService = clienteService;
+            _produtoService = produtoService;
+            _metaService = metaService;
+        }
+
         public async Task<IActionResult> Index()
         {
-            try
+            var dashboard = new CrmDashboard
             {
-                var dashboard = await GetDashboardDataAsync();
-                return View(dashboard);
-            }
-            catch (Exception ex)
-            {
-                // Log the exception
-                return View("Error", new ErrorViewModel { RequestId = ex.Message });
-            }
+                TotalClientes = await _clienteService.ContarClientesAtivosAsync(),
+                TotalProdutos = (await _produtoService.ListarTodosAsync()).Count,
+                TotalMetas = (await _metaService.ListarTodasAsync()).Count,
+                TotalInteracoes = 0, // Removido do escopo simplificado
+
+                ClientesRecentes = await _clienteService.ListarTodosAsync(),
+                ProdutosMaisVendidos = await _produtoService.ListarTodosAsync(),
+
+                ValorTotalMetas = (await _metaService.ListarTodasAsync())
+                    .Sum(m => m.Valor),
+
+                MetasConcluidas = (await _metaService.ListarTodasAsync())
+                    .Count(m => m.Status == Lib.Models.StatusMeta.Concluida),
+
+                MetasEmAndamento = (await _metaService.ListarTodasAsync())
+                    .Count(m => m.Status == Lib.Models.StatusMeta.EmAndamento)
+            };
+
+            return View(dashboard);
+        }
+
+        public IActionResult Relatorios()
+        {
+            TempData["Info"] = "O módulo de Relatórios está em desenvolvimento. Em breve estará disponível!";
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Configuracoes()
+        {
+            TempData["Info"] = "O módulo de Configurações está em desenvolvimento. Em breve estará disponível!";
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
@@ -44,9 +77,9 @@ namespace CustomerSuccessCRM.Web.Controllers
             var dashboard = new CrmDashboard();
 
             // Buscar dados básicos
-            var clientes = await clienteService.ListarTodosAsync();
-            var produtos = await produtoService.ListarTodosAsync();
-            var metas = await metaService.ListarTodasAsync();
+            var clientes = await _clienteService.ListarTodosAsync();
+            var produtos = await _produtoService.ListarTodosAsync();
+            var metas = await _metaService.ListarTodasAsync();
 
             // Preencher dados do dashboard
             dashboard.TotalClientes = clientes.Count;
@@ -60,7 +93,7 @@ namespace CustomerSuccessCRM.Web.Controllers
             dashboard.ValorTotalMetas = metas.Sum(m => m.Valor);
 
             // Buscar produtos mais vendidos
-            var produtosMaisVendidos = await produtoService.ListarMaisVendidosAsync(5);
+            var produtosMaisVendidos = await _produtoService.ListarMaisVendidosAsync(5);
             dashboard.ProdutosMaisVendidos = produtosMaisVendidos;
 
             // Buscar clientes recentes
