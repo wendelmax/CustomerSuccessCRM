@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "CU3UvqD+xrU=",
+  "success": true,
+  "projectFilePath": "/home/wendel/Projetos/CustomerSuccessCRM/CustomerSuccessCRM.Forms/CustomerSuccessCRM.Forms.csproj",
+  "expectedPackageFiles": [
+    "/home/wendel/.nuget/packages/microsoft.netcore.app.ref/8.0.17/microsoft.netcore.app.ref.8.0.17.nupkg.sha512",
+    "/home/wendel/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.17/microsoft.aspnetcore.app.ref.8.0.17.nupkg.sha512",
+    "/home/wendel/.nuget/packages/microsoft.netcore.app.host.linux-x64/8.0.17/microsoft.netcore.app.host.linux-x64.8.0.17.nupkg.sha512"
+  ],
+  "logs": []
+}

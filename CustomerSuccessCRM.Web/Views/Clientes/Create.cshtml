@@ -1,0 +1,135 @@
+@model CustomerSuccessCRM.Lib.Models.Cliente
+@using CustomerSuccessCRM.Lib.Models
+@{
+    ViewData["Title"] = "Novo Cliente";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-user-plus mr-1"></i>
+                    Cadastrar Novo Cliente
+                </h3>
+            </div>
+            <form asp-action="Create" method="post">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Nome" class="control-label">Nome *</label>
+                                <input asp-for="Nome" class="form-control" placeholder="Digite o nome" />
+                                <span asp-validation-for="Nome" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Sobrenome" class="control-label">Sobrenome</label>
+                                <input asp-for="Sobrenome" class="form-control" placeholder="Digite o sobrenome" />
+                                <span asp-validation-for="Sobrenome" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Email" class="control-label">Email *</label>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="exemplo@email.com" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Telefone" class="control-label">Telefone</label>
+                                <input asp-for="Telefone" class="form-control" placeholder="(11) 99999-9999" />
+                                <span asp-validation-for="Telefone" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Empresa" class="control-label">Empresa</label>
+                                <input asp-for="Empresa" class="form-control" placeholder="Nome da empresa" />
+                                <span asp-validation-for="Empresa" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Cargo" class="control-label">Cargo</label>
+                                <input asp-for="Cargo" class="form-control" placeholder="Cargo na empresa" />
+                                <span asp-validation-for="Cargo" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Cidade" class="control-label">Cidade</label>
+                                <input asp-for="Cidade" class="form-control" placeholder="Cidade" />
+                                <span asp-validation-for="Cidade" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Estado" class="control-label">Estado</label>
+                                <input asp-for="Estado" class="form-control" placeholder="Estado" />
+                                <span asp-validation-for="Estado" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Status" class="control-label">Status *</label>
+                                <select asp-for="Status" class="form-control">
+                                    <option value="">Selecione um status</option>
+                                    <option value="@StatusCliente.Ativo">Ativo</option>
+                                    <option value="@StatusCliente.Inativo">Inativo</option>
+                                    <option value="@StatusCliente.Prospecto">Prospecto</option>
+                                    <option value="@StatusCliente.ClienteVip">Cliente VIP</option>
+                                </select>
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Observacoes" class="control-label">Observações</label>
+                        <textarea asp-for="Observacoes" class="form-control" rows="3" placeholder="Observações adicionais..."></textarea>
+                        <span asp-validation-for="Observacoes" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Voltar
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Salvar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Máscara para telefone
+            $('#Telefone').mask('(00) 00000-0000');
+            
+            // Auto-focus no primeiro campo
+            $('#Nome').focus();
+        });
+    </script>
+} 

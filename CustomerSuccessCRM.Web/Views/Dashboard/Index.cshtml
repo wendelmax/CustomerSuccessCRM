@@ -1,0 +1,223 @@
+@model CustomerSuccessCRM.Lib.Models.CrmDashboard
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- Info boxes -->
+<div class="row">
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-users"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Total de Clientes</span>
+                <span class="info-box-number">@Model.TotalClientes</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-chart-line"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Oportunidades</span>
+                <span class="info-box-number">@Model.TotalOportunidades</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-comments"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Interações</span>
+                <span class="info-box-number">@Model.TotalInteracoes</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-box"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Produtos</span>
+                <span class="info-box-number">@Model.TotalProdutos</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <!-- AREA CHART -->
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-area mr-1"></i>
+                    Valor das Oportunidades
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="chart">
+                    <div class="text-center">
+                        <h2 class="text-primary">R$ @Model.ValorTotalOportunidades.ToString("N2")</h2>
+                        <p class="text-muted">Valor total das oportunidades ativas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <!-- DONUT CHART -->
+        <div class="card card-success">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-pie mr-1"></i>
+                    Status das Oportunidades
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="chart">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon"><i class="fas fa-check"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Fechadas</span>
+                                    <span class="info-box-number">@Model.OportunidadesFechadas</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="info-box bg-warning">
+                                <span class="info-box-icon"><i class="fas fa-clock"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Em Andamento</span>
+                                    <span class="info-box-number">@Model.OportunidadesEmAndamento</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <!-- TABLE: ÚLTIMAS INTERAÇÕES -->
+        <div class="card">
+            <div class="card-header border-transparent">
+                <h3 class="card-title">
+                    <i class="fas fa-comments mr-1"></i>
+                    Últimas Interações
+                </h3>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table m-0">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Tipo</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.UltimasInteracoes != null && Model.UltimasInteracoes.Any())
+                            {
+                                @foreach (var interacao in Model.UltimasInteracoes.Take(5))
+                                {
+                                    <tr>
+                                        <td>@interacao.Cliente?.Nome</td>
+                                        <td>@interacao.Tipo</td>
+                                        <td>@interacao.DataInteracao.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            <span class="badge badge-@(interacao.Status == "Concluída" ? "success" : "warning")">
+                                                @interacao.Status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center">Nenhuma interação encontrada</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer clearfix">
+                <a asp-controller="Interacoes" asp-action="Index" class="btn btn-sm btn-secondary float-right">Ver Todas</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <!-- PRODUCT LIST -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-box mr-1"></i>
+                    Produtos Mais Vendidos
+                </h3>
+            </div>
+            <div class="card-body p-0">
+                <ul class="products-list product-list-in-card pl-2 pr-2">
+                    @if (Model.ProdutosMaisVendidos != null && Model.ProdutosMaisVendidos.Any())
+                    {
+                        @foreach (var produto in Model.ProdutosMaisVendidos.Take(3))
+                        {
+                            <li class="item">
+                                <div class="product-info">
+                                    <a href="javascript:void(0)" class="product-title">
+                                        @produto.Nome
+                                        <span class="badge badge-warning float-right">R$ @produto.Preco.ToString("N2")</span>
+                                    </a>
+                                    <span class="product-description">
+                                        @produto.Descricao
+                                    </span>
+                                </div>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="item">
+                            <div class="product-info">
+                                <span class="product-description">Nenhum produto encontrado</span>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="card-footer text-center">
+                <a asp-controller="Produtos" asp-action="Index" class="uppercase">Ver Todos os Produtos</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+    .border-left-success {
+        border-left: 0.25rem solid #1cc88a !important;
+    }
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc !important;
+    }
+    .border-left-warning {
+        border-left: 0.25rem solid #f6c23e !important;
+    }
+    .text-gray-300 {
+        color: #dddfeb !important;
+    }
+    .text-gray-800 {
+        color: #5a5c69 !important;
+    }
+    .text-xs {
+        font-size: 0.7rem;
+    }
+</style> 

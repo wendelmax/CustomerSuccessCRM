@@ -1,0 +1,131 @@
+@model IEnumerable<CustomerSuccessCRM.Lib.Models.Cliente>
+@using CustomerSuccessCRM.Lib.Models
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-users mr-1"></i>
+                    Lista de Clientes
+                </h3>
+                <div class="card-tools">
+                    <a asp-action="Create" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Novo Cliente
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <form method="get" class="form-inline">
+                            <div class="input-group">
+                                <input type="text" name="searchString" class="form-control" placeholder="Buscar por nome ou empresa..." value="@ViewData["CurrentFilter"]">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-default">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="float-right">
+                            <form method="get" class="form-inline">
+                                <select class="form-control form-control-sm" name="statusFilter" onchange="this.form.submit()">
+                                    <option value="">Todos os Status</option>
+                                    <option value="Ativo" @(ViewData["StatusFilter"]?.ToString() == "Ativo" ? "selected" : "")>Ativo</option>
+                                    <option value="Inativo" @(ViewData["StatusFilter"]?.ToString() == "Inativo" ? "selected" : "")>Inativo</option>
+                                    <option value="Prospecto" @(ViewData["StatusFilter"]?.ToString() == "Prospecto" ? "selected" : "")>Prospecto</option>
+                                    <option value="ClienteVip" @(ViewData["StatusFilter"]?.ToString() == "ClienteVip" ? "selected" : "")>Cliente VIP</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
+                                        Nome <i class="fas fa-sort"></i>
+                                    </a>
+                                </th>
+                                <th>Empresa</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@item.Nome</strong>
+                                        @if (!string.IsNullOrEmpty(item.Sobrenome))
+                                        {
+                                            <br><small class="text-muted">@item.Sobrenome</small>
+                                        }
+                                    </td>
+                                    <td>@item.Empresa</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.Email))
+                                        {
+                                            <a href="mailto:@item.Email">@item.Email</a>
+                                        }
+                                    </td>
+                                    <td>@item.Telefone</td>
+                                    <td>
+                                        @{
+                                            var badgeClass = item.Status switch
+                                            {
+                                                StatusCliente.Ativo => "badge-success",
+                                                StatusCliente.Inativo => "badge-danger",
+                                                StatusCliente.Prospecto => "badge-warning",
+                                                StatusCliente.ClienteVip => "badge-info",
+                                                _ => "badge-secondary"
+                                            };
+                                        }
+                                        <span class="badge @badgeClass">@item.Status</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary" title="Detalhes">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" title="Excluir">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (!Model.Any())
+                {
+                    <div class="text-center py-4">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Nenhum cliente encontrado</h5>
+                        <p class="text-muted">Comece adicionando seu primeiro cliente.</p>
+                        <a asp-action="Create" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Adicionar Cliente
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div> 
