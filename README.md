@@ -2,7 +2,7 @@
 
 Sistema de CRM (Customer Relationship Management) focado em Customer Success, desenvolvido em .NET 8.0.
 
-## �� Funcionalidades
+## 📋 Funcionalidades
 
 - **Gestão completa de clientes** com histórico de interações
 - **Gestão de produtos** com controle de estoque e preços
@@ -57,10 +57,144 @@ O projeto está organizado em quatro camadas principais:
 
 ### Pré-requisitos
 - .NET 8.0 SDK
-- Visual Studio 2022 ou VS Code
+- IDE: Visual Studio 2022, VS Code ou JetBrains Rider
 - Git
 
-### Instalação
+### 🐧 Configuração Específica para Linux
+
+#### Instalação do .NET 8.0 SDK
+
+**Ubuntu/Debian:**
+```bash
+# Adicionar repositório Microsoft
+wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+sudo apt update
+
+# Instalar .NET 8.0 SDK
+sudo apt install dotnet-sdk-8.0
+
+# Verificar instalação
+dotnet --version
+```
+
+**Fedora/RHEL:**
+```bash
+# Adicionar repositório Microsoft
+sudo dnf install dotnet-sdk-8.0
+
+# Verificar instalação
+dotnet --version
+```
+
+**Arch Linux:**
+```bash
+# Via pacman
+sudo pacman -S dotnet-sdk
+
+# Verificar instalação
+dotnet --version
+```
+
+#### 🛠️ IDEs Recomendadas para Linux
+
+**JetBrains Rider (Recomendado):**
+- **Download**: https://www.jetbrains.com/rider/download/
+- **Vantagens**: 
+  - IntelliSense completo para C#
+  - Debugging avançado com breakpoints
+  - Refactoring automático
+  - Integração nativa com Git
+  - Suporte a Docker e containers
+  - Performance otimizada para Linux
+  - Experiência profissional completa
+
+**Visual Studio Code:**
+```bash
+# Instalar VS Code
+sudo snap install code --classic
+
+# Extensões recomendadas:
+# - C# Dev Kit
+# - C# Extensions
+# - Avalonia for Visual Studio Code
+# - .NET Install Tool
+```
+
+**Instalação via Snap:**
+```bash
+sudo snap install rider --classic
+```
+
+#### 🎯 Configuração do Projeto no Linux
+
+```bash
+# 1. Clone o repositório
+git clone https://github.com/seu-usuario/CustomerSuccessCRM.git
+cd CustomerSuccessCRM
+
+# 2. Restaurar pacotes
+dotnet restore
+
+# 3. Configurar banco de dados
+cd CustomerSuccessCRM.Web
+dotnet ef database update
+
+# 4. Executar aplicação Web
+dotnet run
+
+# 5. Em outro terminal, executar aplicação Desktop
+cd CustomerSuccessCRM.Desktop
+dotnet run
+```
+
+#### 🔧 Configurações Específicas do Linux
+
+**Permissões de execução:**
+```bash
+# Tornar executável (se necessário)
+chmod +x CustomerSuccessCRM.Desktop/bin/Debug/net8.0/CustomerSuccessCRM.Desktop
+```
+
+**Dependências do sistema:**
+```bash
+# Ubuntu/Debian - Dependências para Avalonia UI
+sudo apt install libc6-dev libgdiplus libx11-dev
+
+# Fedora/RHEL
+sudo dnf install libgdiplus libX11-devel
+
+# Arch Linux
+sudo pacman -S gdiplus libx11
+```
+
+**Configuração do Rider:**
+1. Abrir o projeto no Rider
+2. Configurar SDK: `File > Settings > Build, Execution, Deployment > Toolset and Build`
+3. Verificar .NET 8.0 SDK está selecionado
+4. Configurar run configurations para Web e Desktop
+
+### 🪟 Configuração para Windows
+
+```bash
+# Instalar .NET 8.0 SDK via winget
+winget install Microsoft.DotNet.SDK.8
+
+# Ou baixar do site oficial
+# https://dotnet.microsoft.com/download/dotnet/8.0
+```
+
+### 🍎 Configuração para macOS
+
+```bash
+# Via Homebrew
+brew install dotnet
+
+# Ou baixar do site oficial
+# https://dotnet.microsoft.com/download/dotnet/8.0
+```
+
+### Instalação Universal
 
 1. **Clone o repositório**:
 ```bash
@@ -207,23 +341,57 @@ Gerencia as notificações do sistema:
 
 ## 🎯 Casos de Uso
 
-### Customer Success Manager
-- Acompanhar progresso de clientes
-- Definir e monitorar metas de sucesso
-- Gerenciar interações e follow-ups
-- Gerar relatórios de performance
+### ✅ Implementado
 
-### Vendedor
-- Gerenciar oportunidades
-- Acompanhar propostas
-- Controlar pipeline de vendas
-- Acessar histórico de clientes
+#### Customer Success Manager
+- **Gestão de Clientes**: Cadastro, edição e busca de clientes
+- **Gestão de Metas**: Definição e acompanhamento de metas de sucesso
+- **Dashboard**: Visualização de métricas e progresso em tempo real
+- **Relatórios**: Acompanhamento de performance e atingimento
 
-### Administrador
-- Configurar produtos e preços
-- Definir metas organizacionais
-- Gerenciar usuários e permissões
-- Acompanhar métricas gerais
+#### Administrador de Produtos
+- **Gestão de Produtos**: Cadastro e manutenção do catálogo
+- **Controle de Estoque**: Acompanhamento de quantidades
+- **Gestão de Preços**: Atualização e controle de preços
+- **Categorização**: Organização por categorias (Hardware, Software, Serviço, Treinamento)
+
+#### Analista de Dados
+- **Dashboard Interativo**: Métricas de clientes, produtos e metas
+- **Relatórios de Progresso**: Acompanhamento de metas em tempo real
+- **Análise de Performance**: Percentual de conclusão e status
+- **Dados Recentes**: Lista de clientes e atividades recentes
+
+#### Equipe de Vendas
+- **Consulta de Clientes**: Busca e visualização de informações
+- **Acompanhamento de Metas**: Progresso de objetivos de vendas
+- **Gestão de Produtos**: Acesso ao catálogo completo
+- **Relatórios**: Métricas de performance e atingimento
+
+### 🚀 Planejado para Futuras Versões
+
+#### Vendedor
+- **Gestão de Oportunidades**: Pipeline de vendas completo
+- **Acompanhamento de Propostas**: Status e follow-up
+- **Controle de Pipeline**: Fases de vendas e conversões
+- **Histórico de Clientes**: Interações e oportunidades anteriores
+
+#### Administrador do Sistema
+- **Gestão de Usuários**: Controle de acesso e permissões
+- **Configurações Avançadas**: Personalização do sistema
+- **Backup e Restauração**: Gestão de dados
+- **Logs e Auditoria**: Monitoramento de atividades
+
+#### Customer Success Manager (Funcionalidades Avançadas)
+- **Gestão de Interações**: Histórico completo de contatos
+- **Workflows Automatizados**: Processos de follow-up
+- **Notificações**: Alertas e lembretes automáticos
+- **Documentos**: Geração de contratos e propostas
+
+#### Integrações
+- **Email**: Envio automático de relatórios
+- **Calendário**: Agendamento de follow-ups
+- **CRM Externo**: Integração com sistemas existentes
+- **APIs**: Conectores para ferramentas de terceiros
 
 ## 🤝 Contribuindo
 
@@ -239,7 +407,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## 📞 Suporte
 
-Para suporte, envie um email para suporte@customersuccesscrm.com ou abra uma issue no GitHub.
+Para suporte, abra uma issue no GitHub.
 
 ---
 
