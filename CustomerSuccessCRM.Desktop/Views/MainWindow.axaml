@@ -1,0 +1,125 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CustomerSuccessCRM.Desktop.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
+        x:Class="CustomerSuccessCRM.Desktop.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Customer Success CRM">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Menu Lateral -->
+        <Border Grid.Column="0" Background="#343a40">
+            <DockPanel>
+                <!-- Logo -->
+                <Border DockPanel.Dock="Top" Height="60" Background="#2c3136" Padding="10">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Border Width="35" Height="35" Background="#007bff" CornerRadius="8">
+                            <TextBlock Text="C" Foreground="White" FontWeight="Bold" FontSize="20"
+                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="Customer Success CRM" Foreground="#cccccc" 
+                                 VerticalAlignment="Center" FontSize="16"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Menu Items -->
+                <StackPanel Spacing="5" Margin="0,20,0,0">
+                    <Button Classes="menuItem" Command="{Binding ShowDashboardCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="📊" FontSize="16"/>
+                            <TextBlock Text="Dashboard" Foreground="#cccccc"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Classes="menuItem" Command="{Binding ShowClientesCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="👥" FontSize="16"/>
+                            <TextBlock Text="Clientes" Foreground="#cccccc"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Classes="menuItem" Command="{Binding ShowProdutosCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="📦" FontSize="16"/>
+                            <TextBlock Text="Produtos" Foreground="#cccccc"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Classes="menuItem" Command="{Binding ShowMetasCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="🎯" FontSize="16"/>
+                            <TextBlock Text="Metas" Foreground="#cccccc"/>
+                        </StackPanel>
+                    </Button>
+
+                    <TextBlock Text="RELATÓRIOS" Foreground="#6c757d" Margin="15,20,15,10"
+                             FontSize="12"/>
+
+                    <Button Classes="menuItem">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="📈" FontSize="16"/>
+                            <TextBlock Text="Relatórios" Foreground="#cccccc"/>
+                        </StackPanel>
+                    </Button>
+
+                    <TextBlock Text="CONFIGURAÇÕES" Foreground="#6c757d" Margin="15,20,15,10"
+                             FontSize="12"/>
+
+                    <Button Classes="menuItem">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="⚙️" FontSize="16"/>
+                            <TextBlock Text="Configurações" Foreground="#cccccc"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Conteúdo Principal -->
+        <Grid Grid.Column="1" Background="#f4f6f9">
+            <!-- Header -->
+            <Border Height="60" VerticalAlignment="Top" Background="White"
+                    BorderBrush="#dee2e6" BorderThickness="0,0,0,1">
+                <Grid Margin="20,0">
+                    <TextBlock Text="{Binding CurrentPage}" FontSize="20"
+                             VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+
+            <!-- Content Area -->
+            <ContentControl Margin="20,80,20,20" Content="{Binding CurrentView}"/>
+        </Grid>
+    </Grid>
+
+    <Window.Styles>
+        <Style Selector="Button.menuItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="Width" Value="250"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="Button.menuItem:pointerover">
+            <Setter Property="Background" Value="#2c3136"/>
+        </Style>
+        <Style Selector="Button.menuItem:pressed">
+            <Setter Property="Background" Value="#23272b"/>
+        </Style>
+    </Window.Styles>
+
+</Window>

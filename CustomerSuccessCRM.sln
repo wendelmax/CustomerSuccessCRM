@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerSuccessCRM.Web", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerSuccessCRM.Tests", "CustomerSuccessCRM.Tests\CustomerSuccessCRM.Tests.csproj", "{A41D3969-54F4-40BE-BE1E-4853EC1F7B94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerSuccessCRM.Desktop", "CustomerSuccessCRM.Desktop\CustomerSuccessCRM.Desktop.csproj", "{2582D4EB-3697-4758-8D2E-B69ACD856A0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{A41D3969-54F4-40BE-BE1E-4853EC1F7B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A41D3969-54F4-40BE-BE1E-4853EC1F7B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A41D3969-54F4-40BE-BE1E-4853EC1F7B94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2582D4EB-3697-4758-8D2E-B69ACD856A0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2582D4EB-3697-4758-8D2E-B69ACD856A0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2582D4EB-3697-4758-8D2E-B69ACD856A0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2582D4EB-3697-4758-8D2E-B69ACD856A0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

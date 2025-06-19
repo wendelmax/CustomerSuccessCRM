@@ -21,6 +21,7 @@ Sistema de CRM (Customer Relationship Management) focado em Customer Success, de
 - SQLite (desenvolvimento)
 - Bootstrap 5
 - AdminLTE 3
+- Avalonia UI (Desktop)
 - xUnit (testes)
 - Moq (mocking para testes)
 
@@ -41,9 +42,10 @@ O projeto está organizado em quatro camadas principais:
    - Business Rules
    - Configurações
 
-3. **CustomerSuccessCRM.Forms**: Interface desktop (Windows Forms)
-   - Formulários
-   - Componentes
+3. **CustomerSuccessCRM.Desktop**: Interface desktop (Avalonia UI)
+   - Views
+   - ViewModels
+   - Componentes multi-plataforma
 
 4. **CustomerSuccessCRM.Tests**: Testes unitários
    - Testes de serviços
@@ -74,10 +76,33 @@ cd CustomerSuccessCRM.Web
 dotnet ef database update
 ```
 
-5. Execute o projeto:
+5. Execute o projeto Web:
 ```bash
 dotnet run
 ```
+
+6. Execute o projeto Desktop:
+```bash
+cd CustomerSuccessCRM.Desktop
+dotnet run
+```
+
+## 🖥️ Aplicação Desktop
+
+A aplicação desktop foi desenvolvida usando **Avalonia UI**, oferecendo:
+
+- **Multi-plataforma**: Funciona em Windows, Linux e macOS
+- **Interface Moderna**: Design limpo e responsivo
+- **Arquitetura MVVM**: Padrão Model-View-ViewModel
+- **Integração Completa**: Compartilha a mesma biblioteca da Web
+
+### Funcionalidades do Desktop
+
+- **Dashboard**: Visão geral com estatísticas e dados recentes
+- **Gestão de Clientes**: CRUD completo com busca e filtros
+- **Navegação Intuitiva**: Menu lateral com acesso rápido às funcionalidades
+
+Para mais detalhes, consulte o [README do Desktop](CustomerSuccessCRM.Desktop/README.md).
 
 ## 🧪 Executando os Testes
 
