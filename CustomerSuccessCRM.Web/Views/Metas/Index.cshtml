@@ -1,0 +1,161 @@
+@model IEnumerable<CustomerSuccessCRM.Lib.Models.Meta>
+@using CustomerSuccessCRM.Lib.Models
+@{
+    ViewData["Title"] = "Metas";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="icon-target"></span>
+                    Lista de Metas
+                </h3>
+                <div class="card-tools">
+                    <a asp-action="Create" class="btn btn-primary btn-sm">
+                        <span class="icon-target"></span> Nova Meta
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <form method="get" class="form-inline">
+                            <div class="input-group">
+                                <input type="text" name="searchTerm" class="form-control" placeholder="Buscar por nome..." value="@ViewData["SearchTerm"]">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-default">
+                                        <span class="icon-search"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="float-right">
+                            <form method="get" class="form-inline">
+                                <select class="form-control form-control-sm" name="status" onchange="this.form.submit()">
+                                    <option value="">Todos os Status</option>
+                                    @{
+                                        var selectedStatus = ViewData["SelectedStatus"]?.ToString();
+                                        var emAndamentoSelected = selectedStatus == "EmAndamento" ? "selected" : "";
+                                        var concluidaSelected = selectedStatus == "Concluida" ? "selected" : "";
+                                        var atrasadaSelected = selectedStatus == "Atrasada" ? "selected" : "";
+                                        var canceladaSelected = selectedStatus == "Cancelada" ? "selected" : "";
+                                    }
+                                    <option value="EmAndamento" selected="@emAndamentoSelected">Em Andamento</option>
+                                    <option value="Concluida" selected="@concluidaSelected">Concluída</option>
+                                    <option value="Atrasada" selected="@atrasadaSelected">Atrasada</option>
+                                    <option value="Cancelada" selected="@canceladaSelected">Cancelada</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Progresso</th>
+                                <th>Data Fim</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@item.Nome</strong>
+                                    </td>
+                                    <td>@item.Descricao</td>
+                                    <td>R$ @item.Valor.ToString("N2")</td>
+                                    <td>
+                                        <div class="progress">
+                                            <div class="progress-bar @(item.Progresso >= 100 ? "bg-success" : item.Progresso >= 70 ? "bg-info" : item.Progresso >= 40 ? "bg-warning" : "bg-danger")" 
+                                                 style="width: @(Math.Min(item.Progresso, 100))%">
+                                                @item.Progresso.ToString("N1")%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (item.DataFim < DateTime.Today && item.Status != StatusMeta.Concluida)
+                                        {
+                                            <span class="text-danger font-weight-bold">@item.DataFim.ToString("dd/MM/yyyy")</span>
+                                        }
+                                        else
+                                        {
+                                            @item.DataFim.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                    <td>
+                                        @{
+                                            var statusClass = item.Status switch
+                                            {
+                                                StatusMeta.EmAndamento => "badge-info",
+                                                StatusMeta.Concluida => "badge-success",
+                                                StatusMeta.Atrasada => "badge-danger",
+                                                StatusMeta.Cancelada => "badge-secondary",
+                                                _ => "badge-secondary"
+                                            };
+                                        }
+                                        <span class="badge @statusClass">@item.Status</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Editar">
+                                                <span class="icon-edit"></span>
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary" title="Detalhes">
+                                                <span class="icon-eye"></span>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" title="Excluir">
+                                                <span class="icon-trash"></span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (!Model.Any())
+                {
+                    <div class="text-center py-4">
+                        <span class="icon-target" style="font-size: 3rem; color: #ccc;"></span>
+                        <h5 class="text-muted">Nenhuma meta encontrada</h5>
+                        <p class="text-muted">Comece criando sua primeira meta.</p>
+                        <a asp-action="Create" class="btn btn-primary">
+                            <span class="icon-target"></span> Criar Meta
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-search::before { content: "🔍"; }
+    .icon-edit::before { content: "✏️"; }
+    .icon-eye::before { content: "👁️"; }
+    .icon-trash::before { content: "🗑️"; }
+    
+    .progress {
+        height: 20px;
+        margin-bottom: 0;
+    }
+    
+    .progress-bar {
+        line-height: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+</style> 

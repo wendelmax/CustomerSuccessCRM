@@ -37,10 +37,17 @@
                             <form method="get" class="form-inline">
                                 <select class="form-control form-control-sm" name="statusFilter" onchange="this.form.submit()">
                                     <option value="">Todos os Status</option>
-                                    <option value="Ativo" @(ViewData["StatusFilter"]?.ToString() == "Ativo" ? "selected" : "")>Ativo</option>
-                                    <option value="Inativo" @(ViewData["StatusFilter"]?.ToString() == "Inativo" ? "selected" : "")>Inativo</option>
-                                    <option value="Prospecto" @(ViewData["StatusFilter"]?.ToString() == "Prospecto" ? "selected" : "")>Prospecto</option>
-                                    <option value="ClienteVip" @(ViewData["StatusFilter"]?.ToString() == "ClienteVip" ? "selected" : "")>Cliente VIP</option>
+                                    @{
+                                        var statusFilter = ViewData["StatusFilter"]?.ToString();
+                                        var ativoSelected = statusFilter == "Ativo" ? "selected" : "";
+                                        var inativoSelected = statusFilter == "Inativo" ? "selected" : "";
+                                        var prospectoSelected = statusFilter == "Prospecto" ? "selected" : "";
+                                        var canceladoSelected = statusFilter == "Cancelado" ? "selected" : "";
+                                    }
+                                    <option value="Ativo" selected="@ativoSelected">Ativo</option>
+                                    <option value="Inativo" selected="@inativoSelected">Inativo</option>
+                                    <option value="Prospecto" selected="@prospectoSelected">Prospecto</option>
+                                    <option value="Cancelado" selected="@canceladoSelected">Cancelado</option>
                                 </select>
                             </form>
                         </div>
@@ -69,10 +76,6 @@
                                 <tr>
                                     <td>
                                         <strong>@item.Nome</strong>
-                                        @if (!string.IsNullOrEmpty(item.Sobrenome))
-                                        {
-                                            <br><small class="text-muted">@item.Sobrenome</small>
-                                        }
                                     </td>
                                     <td>@item.Empresa</td>
                                     <td>
@@ -89,7 +92,7 @@
                                                 StatusCliente.Ativo => "badge-success",
                                                 StatusCliente.Inativo => "badge-danger",
                                                 StatusCliente.Prospecto => "badge-warning",
-                                                StatusCliente.ClienteVip => "badge-info",
+                                                StatusCliente.Cancelado => "badge-secondary",
                                                 _ => "badge-secondary"
                                             };
                                         }

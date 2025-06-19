@@ -1,0 +1,93 @@
+@model CustomerSuccessCRM.Lib.Models.Meta
+@using CustomerSuccessCRM.Lib.Models
+@{
+    ViewData["Title"] = "Detalhes da Meta";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="icon-target"></span>
+                    Detalhes da Meta
+                </h3>
+                <div class="card-tools">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info btn-sm">
+                        <span class="icon-edit"></span> Editar
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary btn-sm">
+                        <span class="icon-arrow-left"></span> Voltar
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th style="width: 150px;">Nome:</th>
+                                <td><strong>@Model.Nome</strong></td>
+                            </tr>
+                            <tr>
+                                <th>Valor:</th>
+                                <td>R$ @Model.Valor.ToString("N2")</td>
+                            </tr>
+                            <tr>
+                                <th>Progresso:</th>
+                                <td>@Model.Progresso.ToString("N1")%</td>
+                            </tr>
+                            <tr>
+                                <th>Data de Início:</th>
+                                <td>@Model.DataInicio.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            <tr>
+                                <th>Data de Fim:</th>
+                                <td>@Model.DataFim.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th style="width: 150px;">Status:</th>
+                                <td>
+                                    @{
+                                        var badgeClass = Model.Status switch
+                                        {
+                                            StatusMeta.EmAndamento => "badge-info",
+                                            StatusMeta.Concluida => "badge-success",
+                                            StatusMeta.Atrasada => "badge-danger",
+                                            StatusMeta.Cancelada => "badge-secondary",
+                                            _ => "badge-secondary"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass">@Model.Status</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Responsável ID:</th>
+                                <td>@Model.ResponsavelId</td>
+                            </tr>
+                            <tr>
+                                <th>Equipe ID:</th>
+                                <td>@Model.EquipeId</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <label>Descrição:</label>
+                        <div class="border rounded p-2 bg-light">@Model.Descricao</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-edit::before { content: "✏️"; }
+    .icon-arrow-left::before { content: "←"; }
+</style> 

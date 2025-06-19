@@ -1,0 +1,99 @@
+@model CustomerSuccessCRM.Lib.Models.Produto
+@using CustomerSuccessCRM.Lib.Models
+@{
+    ViewData["Title"] = "Detalhes do Produto";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="icon-box"></span>
+                    Detalhes do Produto
+                </h3>
+                <div class="card-tools">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info btn-sm">
+                        <span class="icon-edit"></span> Editar
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary btn-sm">
+                        <span class="icon-arrow-left"></span> Voltar
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th style="width: 150px;">Nome:</th>
+                                <td><strong>@Model.Nome</strong></td>
+                            </tr>
+                            <tr>
+                                <th>Categoria:</th>
+                                <td>@Model.Categoria</td>
+                            </tr>
+                            <tr>
+                                <th>Preço Base:</th>
+                                <td>R$ @Model.PrecoBase.ToString("N2")</td>
+                            </tr>
+                            <tr>
+                                <th>Estoque:</th>
+                                <td>@Model.QuantidadeEstoque</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th style="width: 150px;">Status:</th>
+                                <td>
+                                    @if (Model.Ativo)
+                                    {
+                                        <span class="badge badge-success">Ativo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">Inativo</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Vendidos:</th>
+                                <td>@Model.QuantidadeVendida</td>
+                            </tr>
+                            <tr>
+                                <th>Data de Cadastro:</th>
+                                <td>@Model.DataCadastro.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                            <tr>
+                                <th>Última Atualização:</th>
+                                <td>
+                                    @if (Model.DataAtualizacao.HasValue)
+                                    {
+                                        @Model.DataAtualizacao.Value.ToString("dd/MM/yyyy HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Nunca atualizado</span>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <label>Descrição:</label>
+                        <div class="border rounded p-2 bg-light">@Model.Descricao</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-edit::before { content: "✏️"; }
+    .icon-arrow-left::before { content: "←"; }
+</style> 

@@ -1,0 +1,103 @@
+@model CustomerSuccessCRM.Lib.Models.Produto
+@using CustomerSuccessCRM.Lib.Models
+@{
+    ViewData["Title"] = "Novo Produto";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="icon-box"></span>
+                    Cadastrar Novo Produto
+                </h3>
+            </div>
+            <form asp-action="Create" method="post">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Nome" class="control-label">Nome *</label>
+                                <input asp-for="Nome" class="form-control" placeholder="Digite o nome do produto" />
+                                <span asp-validation-for="Nome" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Categoria" class="control-label">Categoria *</label>
+                                <select asp-for="Categoria" class="form-control">
+                                    <option value="">Selecione uma categoria</option>
+                                    <option value="@CategoriaProduto.Hardware">Hardware</option>
+                                    <option value="@CategoriaProduto.Software">Software</option>
+                                    <option value="@CategoriaProduto.Servico">Serviço</option>
+                                    <option value="@CategoriaProduto.Treinamento">Treinamento</option>
+                                </select>
+                                <span asp-validation-for="Categoria" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PrecoBase" class="control-label">Preço Base *</label>
+                                <input asp-for="PrecoBase" type="number" step="0.01" class="form-control" placeholder="0.00" />
+                                <span asp-validation-for="PrecoBase" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="QuantidadeEstoque" class="control-label">Quantidade em Estoque</label>
+                                <input asp-for="QuantidadeEstoque" type="number" class="form-control" placeholder="0" />
+                                <span asp-validation-for="QuantidadeEstoque" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Descricao" class="control-label">Descrição</label>
+                        <textarea asp-for="Descricao" class="form-control" rows="3" placeholder="Descrição detalhada do produto..."></textarea>
+                        <span asp-validation-for="Descricao" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <span class="icon-arrow-left"></span> Voltar
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button type="submit" class="btn btn-primary">
+                                <span class="icon-save"></span> Salvar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Auto-focus no primeiro campo
+            $('#Nome').focus();
+            
+            // Máscara para preço
+            $('#PrecoBase').on('input', function() {
+                var value = this.value.replace(/\D/g, '');
+                value = (parseFloat(value) / 100).toFixed(2);
+                this.value = value;
+            });
+        });
+    </script>
+}
+
+<style>
+    .icon-arrow-left::before { content: "←"; }
+    .icon-save::before { content: "💾"; }
+</style> 

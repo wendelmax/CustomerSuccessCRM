@@ -1,0 +1,132 @@
+@model CustomerSuccessCRM.Lib.Models.Cliente
+@using CustomerSuccessCRM.Lib.Models
+@{
+    ViewData["Title"] = "Detalhes do Cliente";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="icon-users"></span>
+                    Detalhes do Cliente
+                </h3>
+                <div class="card-tools">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info btn-sm">
+                        <span class="icon-edit"></span> Editar
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary btn-sm">
+                        <span class="icon-arrow-left"></span> Voltar
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th style="width: 150px;">Nome:</th>
+                                <td><strong>@Model.Nome</strong></td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.Email))
+                                    {
+                                        <a href="mailto:@Model.Email">@Model.Email</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Não informado</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Telefone:</th>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.Telefone))
+                                    {
+                                        @Model.Telefone
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Não informado</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Empresa:</th>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.Empresa))
+                                    {
+                                        @Model.Empresa
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Não informado</span>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th style="width: 150px;">Status:</th>
+                                <td>
+                                    @{
+                                        var badgeClass = Model.Status switch
+                                        {
+                                            StatusCliente.Ativo => "badge-success",
+                                            StatusCliente.Inativo => "badge-danger",
+                                            StatusCliente.Prospecto => "badge-warning",
+                                            StatusCliente.Cancelado => "badge-secondary",
+                                            _ => "badge-secondary"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass">@Model.Status</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Vendedor ID:</th>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.VendedorId))
+                                    {
+                                        @Model.VendedorId
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Não informado</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Data de Cadastro:</th>
+                                <td>@Model.DataCadastro.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                            <tr>
+                                <th>Última Atualização:</th>
+                                <td>
+                                    @if (Model.DataAtualizacao.HasValue)
+                                    {
+                                        @Model.DataAtualizacao.Value.ToString("dd/MM/yyyy HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Nunca atualizado</span>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-edit::before { content: "✏️"; }
+    .icon-arrow-left::before { content: "←"; }
+</style> 

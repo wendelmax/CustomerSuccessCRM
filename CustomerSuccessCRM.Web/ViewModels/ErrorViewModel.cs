@@ -1,4 +1,4 @@
-namespace CustomerSuccessCRM.Web.Models
+namespace CustomerSuccessCRM.Web.ViewModels
 {
     public class ErrorViewModel
     {

@@ -8,7 +8,7 @@ namespace CustomerSuccessCRM.Lib
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddCustomerSuccessCRMServices(this IServiceCollection services, string? connectionString = null)
+        public static IServiceCollection AddCustomerSuccessCrmServices(this IServiceCollection services, string? connectionString = null)
         {
             // Configuração do banco de dados SQLite
             if (string.IsNullOrEmpty(connectionString))

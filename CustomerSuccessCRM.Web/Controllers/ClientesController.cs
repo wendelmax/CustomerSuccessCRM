@@ -1,39 +1,34 @@
 using Microsoft.AspNetCore.Mvc;
 using CustomerSuccessCRM.Lib.Services;
 using CustomerSuccessCRM.Lib.Models;
-using CustomerSuccessCRM.Web.Models;
+using CustomerSuccessCRM.Web.ViewModels;
 
 namespace CustomerSuccessCRM.Web.Controllers
 {
-    public class ClientesController : Controller
+    public class ClientesController(ClienteService clienteService, ILogger<ClientesController> logger)
+        : Controller
     {
-        private readonly ICrmService _crmService;
-        private readonly ILogger<ClientesController> _logger;
-
-        public ClientesController(ICrmService crmService, ILogger<ClientesController> logger)
-        {
-            _crmService = crmService;
-            _logger = logger;
-        }
-
         // GET: Clientes
         public async Task<IActionResult> Index(string searchTerm, StatusCliente? status)
         {
             try
             {
-                IEnumerable<Cliente> clientes;
+                List<Cliente> clientes;
 
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    clientes = await _crmService.SearchClientesAsync(searchTerm);
+                    // Implementar busca por nome quando disponível
+                    clientes = await clienteService.ListarTodosAsync();
+                    clientes = clientes.Where(c => c.Nome.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                                  c.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
                 else if (status.HasValue)
                 {
-                    clientes = await _crmService.GetClientesByStatusAsync(status.Value);
+                    clientes = await clienteService.BuscarPorStatusAsync(status.Value);
                 }
                 else
                 {
-                    clientes = await _crmService.GetAllClientesAsync();
+                    clientes = await clienteService.ListarTodosAsync();
                 }
 
                 ViewBag.SearchTerm = searchTerm;
@@ -46,7 +41,7 @@ namespace CustomerSuccessCRM.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao listar clientes");
+                logger.LogError(ex, "Erro ao listar clientes");
                 return View("Error", new ErrorViewModel 
                 { 
                     RequestId = HttpContext.TraceIdentifier,
@@ -60,7 +55,7 @@ namespace CustomerSuccessCRM.Web.Controllers
         {
             try
             {
-                var cliente = await _crmService.GetClienteByIdAsync(id);
+                var cliente = await clienteService.BuscarPorIdAsync(id);
                 if (cliente == null)
                 {
                     return NotFound();
@@ -70,7 +65,7 @@ namespace CustomerSuccessCRM.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao buscar detalhes do cliente {ClienteId}", id);
+                logger.LogError(ex, "Erro ao buscar detalhes do cliente {ClienteId}", id);
                 return View("Error", new ErrorViewModel 
                 { 
                     RequestId = HttpContext.TraceIdentifier,
@@ -91,20 +86,20 @@ namespace CustomerSuccessCRM.Web.Controllers
         // POST: Clientes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Nome,Sobrenome,Email,Telefone,Empresa,Cargo,Endereco,Cidade,Estado,CEP,Observacoes,Status")] Cliente cliente)
+        public async Task<IActionResult> Create([Bind("Nome,Email,Telefone,Empresa,VendedorId,Status")] Cliente cliente)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _crmService.CreateClienteAsync(cliente);
+                    await clienteService.CadastrarAsync(cliente);
                     TempData["Success"] = "Cliente criado com sucesso!";
                     return RedirectToAction(nameof(Index));
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao criar cliente");
+                logger.LogError(ex, "Erro ao criar cliente");
                 ModelState.AddModelError("", "Erro ao criar cliente: " + ex.Message);
             }
 
@@ -119,7 +114,7 @@ namespace CustomerSuccessCRM.Web.Controllers
         {
             try
             {
-                var cliente = await _crmService.GetClienteByIdAsync(id);
+                var cliente = await clienteService.BuscarPorIdAsync(id);
                 if (cliente == null)
                 {
                     return NotFound();
@@ -132,7 +127,7 @@ namespace CustomerSuccessCRM.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao buscar cliente {ClienteId} para edição", id);
+                logger.LogError(ex, "Erro ao buscar cliente {ClienteId} para edição", id);
                 return View("Error", new ErrorViewModel 
                 { 
                     RequestId = HttpContext.TraceIdentifier,
@@ -144,7 +139,7 @@ namespace CustomerSuccessCRM.Web.Controllers
         // POST: Clientes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Sobrenome,Email,Telefone,Empresa,Cargo,Endereco,Cidade,Estado,CEP,Observacoes,Status")] Cliente cliente)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Email,Telefone,Empresa,VendedorId,Status")] Cliente cliente)
         {
             try
             {
@@ -155,14 +150,14 @@ namespace CustomerSuccessCRM.Web.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    await _crmService.UpdateClienteAsync(cliente);
+                    await clienteService.AtualizarAsync(cliente);
                     TempData["Success"] = "Cliente atualizado com sucesso!";
                     return RedirectToAction(nameof(Index));
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao atualizar cliente {ClienteId}", id);
+                logger.LogError(ex, "Erro ao atualizar cliente {ClienteId}", id);
                 ModelState.AddModelError("", "Erro ao atualizar cliente: " + ex.Message);
             }
 
@@ -177,7 +172,7 @@ namespace CustomerSuccessCRM.Web.Controllers
         {
             try
             {
-                var cliente = await _crmService.GetClienteByIdAsync(id);
+                var cliente = await clienteService.BuscarPorIdAsync(id);
                 if (cliente == null)
                 {
                     return NotFound();
@@ -187,7 +182,7 @@ namespace CustomerSuccessCRM.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao buscar cliente {ClienteId} para exclusão", id);
+                logger.LogError(ex, "Erro ao buscar cliente {ClienteId} para exclusão", id);
                 return View("Error", new ErrorViewModel 
                 { 
                     RequestId = HttpContext.TraceIdentifier,
@@ -203,13 +198,13 @@ namespace CustomerSuccessCRM.Web.Controllers
         {
             try
             {
-                await _crmService.DeleteClienteAsync(id);
+                await clienteService.DeletarAsync(id);
                 TempData["Success"] = "Cliente excluído com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao excluir cliente {ClienteId}", id);
+                logger.LogError(ex, "Erro ao excluir cliente {ClienteId}", id);
                 return View("Error", new ErrorViewModel 
                 { 
                     RequestId = HttpContext.TraceIdentifier,
@@ -229,22 +224,20 @@ namespace CustomerSuccessCRM.Web.Controllers
                     return Json(new List<Cliente>());
                 }
 
-                var clientes = await _crmService.SearchClientesAsync(term);
-                var result = clientes.Select(c => new
-                {
-                    id = c.Id,
-                    text = $"{c.Nome} {c.Sobrenome} - {c.Empresa}",
-                    nome = c.Nome,
-                    sobrenome = c.Sobrenome,
-                    email = c.Email,
-                    empresa = c.Empresa
-                });
-                return Json(result);
+                var clientes = await clienteService.ListarTodosAsync();
+                var resultados = clientes.Where(c => 
+                    c.Nome.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    c.Email.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    c.Empresa.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    .Take(10)
+                    .Select(c => new { c.Id, c.Nome, c.Email, c.Empresa });
+
+                return Json(resultados);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao pesquisar clientes com o termo: {SearchTerm}", term);
-                return BadRequest(new { error = "Ocorreu um erro ao pesquisar clientes." });
+                logger.LogError(ex, "Erro ao buscar clientes");
+                return Json(new List<object>());
             }
         }
     }

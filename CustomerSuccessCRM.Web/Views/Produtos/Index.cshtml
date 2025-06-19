@@ -1,0 +1,152 @@
+@model IEnumerable<CustomerSuccessCRM.Lib.Models.Produto>
+@using CustomerSuccessCRM.Lib.Models
+@{
+    ViewData["Title"] = "Produtos";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="icon-box"></span>
+                    Lista de Produtos
+                </h3>
+                <div class="card-tools">
+                    <a asp-action="Create" class="btn btn-primary btn-sm">
+                        <span class="icon-box"></span> Novo Produto
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <form method="get" class="form-inline">
+                            <div class="input-group">
+                                <input type="text" name="searchTerm" class="form-control" placeholder="Buscar por nome..." value="@ViewData["SearchTerm"]">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-default">
+                                        <span class="icon-search"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="float-right">
+                            <form method="get" class="form-inline">
+                                <select class="form-control form-control-sm" name="categoria" onchange="this.form.submit()">
+                                    <option value="">Todas as Categorias</option>
+                                    @{
+                                        var selectedCategoria = ViewData["SelectedCategoria"]?.ToString();
+                                        var hardwareSelected = selectedCategoria == "Hardware" ? "selected" : "";
+                                        var softwareSelected = selectedCategoria == "Software" ? "selected" : "";
+                                        var servicoSelected = selectedCategoria == "Servico" ? "selected" : "";
+                                        var treinamentoSelected = selectedCategoria == "Treinamento" ? "selected" : "";
+                                    }
+                                    <option value="Hardware" selected="@hardwareSelected">Hardware</option>
+                                    <option value="Software" selected="@softwareSelected">Software</option>
+                                    <option value="Servico" selected="@servicoSelected">Serviço</option>
+                                    <option value="Treinamento" selected="@treinamentoSelected">Treinamento</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Preço Base</th>
+                                <th>Categoria</th>
+                                <th>Estoque</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@item.Nome</strong>
+                                    </td>
+                                    <td>@item.Descricao</td>
+                                    <td>R$ @item.PrecoBase.ToString("N2")</td>
+                                    <td>
+                                        @{
+                                            var categoriaClass = item.Categoria switch
+                                            {
+                                                CategoriaProduto.Hardware => "badge-info",
+                                                CategoriaProduto.Software => "badge-success",
+                                                CategoriaProduto.Servico => "badge-warning",
+                                                CategoriaProduto.Treinamento => "badge-primary",
+                                                _ => "badge-secondary"
+                                            };
+                                        }
+                                        <span class="badge @categoriaClass">@item.Categoria</span>
+                                    </td>
+                                    <td>
+                                        @if (item.QuantidadeEstoque <= 5)
+                                        {
+                                            <span class="text-danger font-weight-bold">@item.QuantidadeEstoque</span>
+                                        }
+                                        else
+                                        {
+                                            @item.QuantidadeEstoque
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.Ativo)
+                                        {
+                                            <span class="badge badge-success">Ativo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-danger">Inativo</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Editar">
+                                                <span class="icon-edit"></span>
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary" title="Detalhes">
+                                                <span class="icon-eye"></span>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" title="Excluir">
+                                                <span class="icon-trash"></span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (!Model.Any())
+                {
+                    <div class="text-center py-4">
+                        <span class="icon-box" style="font-size: 3rem; color: #ccc;"></span>
+                        <h5 class="text-muted">Nenhum produto encontrado</h5>
+                        <p class="text-muted">Comece adicionando seu primeiro produto.</p>
+                        <a asp-action="Create" class="btn btn-primary">
+                            <span class="icon-box"></span> Adicionar Produto
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-search::before { content: "🔍"; }
+    .icon-edit::before { content: "✏️"; }
+    .icon-eye::before { content: "👁️"; }
+    .icon-trash::before { content: "🗑️"; }
+</style> 

@@ -1,0 +1,98 @@
+@model CustomerSuccessCRM.Lib.Models.Cliente
+@using CustomerSuccessCRM.Lib.Models
+@{
+    ViewData["Title"] = "Excluir Cliente";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-danger">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="icon-warning"></span>
+                    Confirmar Exclusão
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <h5><span class="icon-warning"></span> Atenção!</h5>
+                    <p>Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th style="width: 150px;">Nome:</th>
+                                <td><strong>@Model.Nome</strong></td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>@Model.Email</td>
+                            </tr>
+                            <tr>
+                                <th>Telefone:</th>
+                                <td>@Model.Telefone</td>
+                            </tr>
+                            <tr>
+                                <th>Empresa:</th>
+                                <td>@Model.Empresa</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th style="width: 150px;">Status:</th>
+                                <td>
+                                    @{
+                                        var badgeClass = Model.Status switch
+                                        {
+                                            StatusCliente.Ativo => "badge-success",
+                                            StatusCliente.Inativo => "badge-danger",
+                                            StatusCliente.Prospecto => "badge-warning",
+                                            StatusCliente.Cancelado => "badge-secondary",
+                                            _ => "badge-secondary"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass">@Model.Status</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Vendedor ID:</th>
+                                <td>@Model.VendedorId</td>
+                            </tr>
+                            <tr>
+                                <th>Data de Cadastro:</th>
+                                <td>@Model.DataCadastro.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <span class="icon-arrow-left"></span> Cancelar
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button type="submit" class="btn btn-danger">
+                                <span class="icon-trash"></span> Confirmar Exclusão
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-warning::before { content: "⚠️"; }
+    .icon-arrow-left::before { content: "←"; }
+    .icon-trash::before { content: "🗑️"; }
+</style> 

@@ -1,0 +1,109 @@
+@model CustomerSuccessCRM.Lib.Models.Cliente
+@using CustomerSuccessCRM.Lib.Models
+@{
+    ViewData["Title"] = "Editar Cliente";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="icon-users"></span>
+                    Editar Cliente
+                </h3>
+            </div>
+            <form asp-action="Edit" method="post">
+                <div class="card-body">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="DataCadastro" />
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Nome" class="control-label">Nome *</label>
+                                <input asp-for="Nome" class="form-control" placeholder="Digite o nome" />
+                                <span asp-validation-for="Nome" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Email" class="control-label">Email *</label>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="exemplo@email.com" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Telefone" class="control-label">Telefone</label>
+                                <input asp-for="Telefone" class="form-control" placeholder="(11) 99999-9999" />
+                                <span asp-validation-for="Telefone" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Empresa" class="control-label">Empresa</label>
+                                <input asp-for="Empresa" class="form-control" placeholder="Nome da empresa" />
+                                <span asp-validation-for="Empresa" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="VendedorId" class="control-label">Vendedor ID</label>
+                                <input asp-for="VendedorId" class="form-control" placeholder="ID do vendedor responsável" />
+                                <span asp-validation-for="VendedorId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Status" class="control-label">Status *</label>
+                                <select asp-for="Status" class="form-control">
+                                    <option value="@StatusCliente.Ativo">Ativo</option>
+                                    <option value="@StatusCliente.Inativo">Inativo</option>
+                                    <option value="@StatusCliente.Prospecto">Prospecto</option>
+                                    <option value="@StatusCliente.Cancelado">Cancelado</option>
+                                </select>
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <span class="icon-arrow-left"></span> Voltar
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button type="submit" class="btn btn-info">
+                                <span class="icon-save"></span> Atualizar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Auto-focus no primeiro campo
+            $('#Nome').focus();
+        });
+    </script>
+}
+
+<style>
+    .icon-arrow-left::before { content: "←"; }
+    .icon-save::before { content: "💾"; }
+</style> 

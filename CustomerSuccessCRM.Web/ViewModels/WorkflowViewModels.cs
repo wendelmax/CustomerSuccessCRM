@@ -1,4 +1,4 @@
-namespace CustomerSuccessCRM.Lib.Models.ViewModels
+namespace CustomerSuccessCRM.Web.ViewModels
 {
     public class WorkflowEstatisticas
     {

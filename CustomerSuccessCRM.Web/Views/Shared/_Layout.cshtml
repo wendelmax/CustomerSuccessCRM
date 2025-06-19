@@ -5,20 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Customer Success CRM</title>
     
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Theme style -->
+    <!-- AdminLTE CSS -->
     <link rel="stylesheet" href="~/css/adminlte.min.css">
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    
+    <style>
+        /* Estilos customizados para ícones Font Awesome */
+        .fas, .far, .fab {
+            font-family: 'Font Awesome 5 Free', serif;
+            font-weight: 900;
+        }
+        .far {
+            font-weight: 400;
+        }
+        
+        /* Ícones básicos usando CSS */
+        .icon-dashboard::before { content: "📊"; }
+        .icon-users::before { content: "👥"; }
+        .icon-box::before { content: "📦"; }
+        .icon-target::before { content: "🎯"; }
+        .icon-chart::before { content: "📈"; }
+        .icon-cog::before { content: "⚙️"; }
+        .icon-bell::before { content: "🔔"; }
+        .icon-bars::before { content: "☰"; }
+        .icon-expand::before { content: "⤢"; }
+        .icon-home::before { content: "🏠"; }
+        
+        /* Preloader customizado */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .preloader.hidden {
+            display: none;
+        }
+        
+        /* Logo customizado */
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: #007bff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
 
         <!-- Preloader -->
-        <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__shake" src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
+        <div class="preloader" id="preloader">
+            <div class="brand-logo">C</div>
         </div>
 
         <!-- Navbar -->
@@ -26,7 +76,9 @@
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button">
+                        <span class="icon-bars"></span>
+                    </a>
                 </li>
             </ul>
 
@@ -35,28 +87,28 @@
                 <!-- Notifications Dropdown Menu -->
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="far fa-bell"></i>
-                        <span class="badge badge-warning navbar-badge">15</span>
+                        <span class="icon-bell"></span>
+                        <span class="badge badge-warning navbar-badge">3</span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <span class="dropdown-item dropdown-header">15 Notifications</span>
+                        <span class="dropdown-item dropdown-header">3 Notificações</span>
                         <div class="dropdown-divider"></div>
                         <a href="#" class="dropdown-item">
-                            <i class="fas fa-envelope mr-2"></i> 4 new messages
-                            <span class="float-right text-muted text-sm">3 mins</span>
+                            <span class="icon-users" style="margin-right: 8px;"></span> Novo cliente cadastrado
+                            <span class="float-right text-muted text-sm">3 min</span>
                         </a>
                         <div class="dropdown-divider"></div>
                         <a href="#" class="dropdown-item">
-                            <i class="fas fa-users mr-2"></i> 8 friend requests
-                            <span class="float-right text-muted text-sm">12 hours</span>
+                            <span class="icon-target" style="margin-right: 8px;"></span> Meta próxima do prazo
+                            <span class="float-right text-muted text-sm">1 hora</span>
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+                        <a href="#" class="dropdown-item dropdown-footer">Ver Todas as Notificações</a>
                     </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                        <i class="fas fa-expand-arrows-alt"></i>
+                        <span class="icon-expand"></span>
                     </a>
                 </li>
             </ul>
@@ -67,8 +119,8 @@
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
             <a asp-controller="Dashboard" asp-action="Index" class="brand-link">
-                <img src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-                <span class="brand-text font-weight-light">CRM System</span>
+                <div class="brand-logo">C</div>
+                <span class="brand-text font-weight-light">Customer Success CRM</span>
             </a>
 
             <!-- Sidebar -->
@@ -76,54 +128,54 @@
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
+                        <!-- Dashboard -->
                         <li class="nav-item">
                             <a asp-controller="Dashboard" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" ? "active" : "")">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <span class="nav-icon icon-dashboard"></span>
                                 <p>Dashboard</p>
                             </a>
                         </li>
+                        
+                        <!-- Clientes -->
                         <li class="nav-item">
                             <a asp-controller="Clientes" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Clientes" ? "active" : "")">
-                                <i class="nav-icon fas fa-users"></i>
+                                <span class="nav-icon icon-users"></span>
                                 <p>Clientes</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a asp-controller="Interacoes" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Interacoes" ? "active" : "")">
-                                <i class="nav-icon fas fa-comments"></i>
-                                <p>Interações</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a asp-controller="Oportunidades" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Oportunidades" ? "active" : "")">
-                                <i class="nav-icon fas fa-chart-line"></i>
-                                <p>Oportunidades</p>
-                            </a>
-                        </li>
+                        
+                        <!-- Produtos -->
                         <li class="nav-item">
                             <a asp-controller="Produtos" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Produtos" ? "active" : "")">
-                                <i class="nav-icon fas fa-box"></i>
+                                <span class="nav-icon icon-box"></span>
                                 <p>Produtos</p>
                             </a>
                         </li>
+                        
+                        <!-- Metas -->
+                        <li class="nav-item">
+                            <a asp-controller="Metas" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Metas" ? "active" : "")">
+                                <span class="nav-icon icon-target"></span>
+                                <p>Metas</p>
+                            </a>
+                        </li>
+                        
                         <li class="nav-header">RELATÓRIOS</li>
+                        
+                        <!-- Relatórios -->
                         <li class="nav-item">
                             <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-file-alt"></i>
+                                <span class="nav-icon icon-chart"></span>
                                 <p>Relatórios</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-chart-pie"></i>
-                                <p>Gráficos</p>
-                            </a>
-                        </li>
+                        
                         <li class="nav-header">CONFIGURAÇÕES</li>
+                        
+                        <!-- Configurações -->
                         <li class="nav-item">
                             <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-cog"></i>
+                                <span class="nav-icon icon-cog"></span>
                                 <p>Configurações</p>
                             </a>
                         </li>
@@ -145,7 +197,11 @@
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Home</a></li>
+                                <li class="breadcrumb-item">
+                                    <a asp-controller="Dashboard" asp-action="Index">
+                                        <span class="icon-home"></span> Home
+                                    </a>
+                                </li>
                                 <li class="breadcrumb-item active">@ViewData["Title"]</li>
                             </ol>
                         </div>
@@ -157,17 +213,36 @@
             <!-- Main content -->
             <section class="content">
                 <div class="container-fluid">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h5><span class="icon-bell"></span> Sucesso!</h5>
+                            @TempData["Success"]
+                        </div>
+                    }
+                    
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h5><span class="icon-bell"></span> Erro!</h5>
+                            @TempData["Error"]
+                        </div>
+                    }
+                    
                     @RenderBody()
                 </div>
             </section>
             <!-- /.content -->
         </div>
         <!-- /.content-wrapper -->
+        
         <footer class="main-footer">
             <strong>Copyright &copy; 2025 <a href="#">Customer Success CRM</a>.</strong>
             Sistema de Gestão de Relacionamento com o Cliente.
             <div class="float-right d-none d-sm-inline-block">
-                <b>Version</b> 1.0.0
+                <b>Versão</b> 1.0.0
             </div>
         </footer>
 
@@ -179,15 +254,71 @@
     </div>
     <!-- ./wrapper -->
 
-    <!-- jQuery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- jQuery UI 1.11.4 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-    <!-- Bootstrap 4 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="~/js/adminlte.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script>
+        // Preloader
+        window.addEventListener('load', function() {
+            document.getElementById('preloader').classList.add('hidden');
+        });
+        
+        // Dropdown toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle sidebar
+            const pushMenuBtn = document.querySelector('[data-widget="pushmenu"]');
+            if (pushMenuBtn) {
+                pushMenuBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.body.classList.toggle('sidebar-collapse');
+                });
+            }
+            
+            // Fullscreen toggle
+            const fullscreenBtn = document.querySelector('[data-widget="fullscreen"]');
+            if (fullscreenBtn) {
+                fullscreenBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen();
+                    } else {
+                        document.exitFullscreen();
+                    }
+                });
+            }
+            
+            // Dropdown menus
+            const dropdownToggles = document.querySelectorAll('[data-toggle="dropdown"]');
+            dropdownToggles.forEach(function(toggle) {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const dropdown = this.nextElementSibling;
+                    dropdown.classList.toggle('show');
+                });
+            });
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+                        menu.classList.remove('show');
+                    });
+                }
+            });
+            
+            // Auto-hide alerts
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    alert.style.opacity = '0';
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 300);
+                }, 5000);
+            });
+        });
+    </script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

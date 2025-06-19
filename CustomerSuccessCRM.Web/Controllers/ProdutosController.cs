@@ -1,17 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using CustomerSuccessCRM.Lib.Services;
 using CustomerSuccessCRM.Lib.Models;
-using CustomerSuccessCRM.Web.Models;
+using CustomerSuccessCRM.Web.ViewModels;
 
 namespace CustomerSuccessCRM.Web.Controllers
 {
     public class ProdutosController : Controller
     {
-        private readonly ICrmService _crmService;
+        private readonly ProdutoService _produtoService;
 
-        public ProdutosController(ICrmService crmService)
+        public ProdutosController(ProdutoService produtoService)
         {
-            _crmService = crmService;
+            _produtoService = produtoService;
         }
 
         // GET: Produtos
@@ -19,24 +19,22 @@ namespace CustomerSuccessCRM.Web.Controllers
         {
             try
             {
-                IEnumerable<Produto> produtos;
+                List<Produto> produtos;
 
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    // Para simplificar, vamos buscar todos e filtrar no controller
-                    var todos = await _crmService.GetAllProdutosAsync();
-                    produtos = todos.Where(p => p.Nome.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                                               (p.Descricao != null && p.Descricao.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)));
+                    // Buscar todos e filtrar por nome
+                    produtos = await _produtoService.ListarTodosAsync();
+                    produtos = produtos.Where(p => p.Nome.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                                  (p.Descricao != null && p.Descricao.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))).ToList();
                 }
                 else if (categoria.HasValue)
                 {
-                    // Para simplificar, vamos buscar todos e filtrar no controller
-                    var todos = await _crmService.GetAllProdutosAsync();
-                    produtos = todos.Where(p => p.Categoria == categoria.Value);
+                    produtos = await _produtoService.BuscarPorCategoriaAsync(categoria.Value);
                 }
                 else
                 {
-                    produtos = await _crmService.GetAllProdutosAsync();
+                    produtos = await _produtoService.ListarTodosAsync();
                 }
 
                 ViewBag.SelectedCategoria = categoria;
@@ -54,7 +52,7 @@ namespace CustomerSuccessCRM.Web.Controllers
         {
             try
             {
-                var produto = await _crmService.GetProdutoByIdAsync(id);
+                var produto = await _produtoService.BuscarPorIdAsync(id);
                 if (produto == null)
                 {
                     return NotFound();
@@ -77,13 +75,14 @@ namespace CustomerSuccessCRM.Web.Controllers
         // POST: Produtos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Nome,Descricao,Preco,Codigo,Categoria,Observacoes")] Produto produto)
+        public async Task<IActionResult> Create([Bind("Nome,Descricao,PrecoBase,Categoria,QuantidadeEstoque")] Produto produto)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _crmService.CreateProdutoAsync(produto);
+                    await _produtoService.CadastrarAsync(produto);
+                    TempData["Success"] = "Produto criado com sucesso!";
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -100,7 +99,7 @@ namespace CustomerSuccessCRM.Web.Controllers
         {
             try
             {
-                var produto = await _crmService.GetProdutoByIdAsync(id);
+                var produto = await _produtoService.BuscarPorIdAsync(id);
                 if (produto == null)
                 {
                     return NotFound();
@@ -117,7 +116,7 @@ namespace CustomerSuccessCRM.Web.Controllers
         // POST: Produtos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Descricao,Preco,Codigo,Categoria,Ativo,Observacoes")] Produto produto)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Descricao,PrecoBase,Categoria,QuantidadeEstoque,Ativo")] Produto produto)
         {
             try
             {
@@ -128,7 +127,8 @@ namespace CustomerSuccessCRM.Web.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    await _crmService.UpdateProdutoAsync(produto);
+                    await _produtoService.AtualizarAsync(produto);
+                    TempData["Success"] = "Produto atualizado com sucesso!";
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -145,7 +145,7 @@ namespace CustomerSuccessCRM.Web.Controllers
         {
             try
             {
-                var produto = await _crmService.GetProdutoByIdAsync(id);
+                var produto = await _produtoService.BuscarPorIdAsync(id);
                 if (produto == null)
                 {
                     return NotFound();
@@ -166,7 +166,8 @@ namespace CustomerSuccessCRM.Web.Controllers
         {
             try
             {
-                await _crmService.DeleteProdutoAsync(id);
+                await _produtoService.DeletarAsync(id);
+                TempData["Success"] = "Produto excluído com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -180,7 +181,22 @@ namespace CustomerSuccessCRM.Web.Controllers
         {
             try
             {
-                var produtos = await _crmService.GetProdutosAtivosAsync();
+                var produtos = await _produtoService.ListarTodosAsync();
+                var produtosAtivos = produtos.Where(p => p.Ativo).ToList();
+                return View(produtosAtivos);
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel { RequestId = ex.Message });
+            }
+        }
+
+        // GET: Produtos/MaisVendidos
+        public async Task<IActionResult> MaisVendidos()
+        {
+            try
+            {
+                var produtos = await _produtoService.ListarMaisVendidosAsync(10);
                 return View(produtos);
             }
             catch (Exception ex)

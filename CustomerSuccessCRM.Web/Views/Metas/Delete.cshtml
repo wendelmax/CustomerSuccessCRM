@@ -1,0 +1,101 @@
+@model CustomerSuccessCRM.Lib.Models.Meta
+@using CustomerSuccessCRM.Lib.Models
+@{
+    ViewData["Title"] = "Excluir Meta";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-danger">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="icon-warning"></span>
+                    Confirmar Exclusão
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <h5><span class="icon-warning"></span> Atenção!</h5>
+                    <p>Tem certeza que deseja excluir esta meta? Esta ação não pode ser desfeita.</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th style="width: 150px;">Nome:</th>
+                                <td><strong>@Model.Nome</strong></td>
+                            </tr>
+                            <tr>
+                                <th>Valor:</th>
+                                <td>R$ @Model.Valor.ToString("N2")</td>
+                            </tr>
+                            <tr>
+                                <th>Progresso:</th>
+                                <td>@Model.Progresso.ToString("N1")%</td>
+                            </tr>
+                            <tr>
+                                <th>Data de Início:</th>
+                                <td>@Model.DataInicio.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            <tr>
+                                <th>Data de Fim:</th>
+                                <td>@Model.DataFim.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th style="width: 150px;">Status:</th>
+                                <td>
+                                    @{
+                                        var badgeClass = Model.Status switch
+                                        {
+                                            StatusMeta.EmAndamento => "badge-info",
+                                            StatusMeta.Concluida => "badge-success",
+                                            StatusMeta.Atrasada => "badge-danger",
+                                            StatusMeta.Cancelada => "badge-secondary",
+                                            _ => "badge-secondary"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass">@Model.Status</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Responsável ID:</th>
+                                <td>@Model.ResponsavelId</td>
+                            </tr>
+                            <tr>
+                                <th>Equipe ID:</th>
+                                <td>@Model.EquipeId</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <span class="icon-arrow-left"></span> Cancelar
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button type="submit" class="btn btn-danger">
+                                <span class="icon-trash"></span> Confirmar Exclusão
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-warning::before { content: "⚠️"; }
+    .icon-arrow-left::before { content: "←"; }
+    .icon-trash::before { content: "🗑️"; }
+</style> 

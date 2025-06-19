@@ -1,4 +1,4 @@
-﻿@model ErrorViewModel
+﻿@model CustomerSuccessCRM.Web.ViewModels.ErrorViewModel
 @{
     ViewData["Title"] = "Erro";
 }
@@ -7,7 +7,7 @@
     <h2 class="headline text-danger">Erro</h2>
 
     <div class="error-content">
-        <h3><i class="fas fa-exclamation-triangle text-danger"></i> Oops! Algo deu errado.</h3>
+        <h3><span class="icon-warning"></span> Oops! Algo deu errado.</h3>
 
         <p>
             @Model.Message
@@ -31,49 +31,50 @@
 
         <div class="mt-4">
             <a href="javascript:history.back()" class="btn btn-outline-primary">
-                <i class="fas fa-arrow-left"></i> Voltar
+                <span class="icon-arrow-left"></span> Voltar
             </a>
             <a href="/" class="btn btn-primary">
-                <i class="fas fa-home"></i> Ir para a Página Inicial
+                <span class="icon-home"></span> Ir para a Página Inicial
             </a>
         </div>
     </div>
 </div>
 
-@section Styles {
-    <style>
-        .error-page {
-            margin: 20px auto;
-            padding: 20px;
-            max-width: 600px;
-        }
+<style>
+    .error-page {
+        margin: 20px auto;
+        padding: 20px;
+        max-width: 600px;
+    }
 
+    .error-page > .headline {
+        float: left;
+        font-size: 100px;
+        font-weight: 300;
+    }
+
+    .error-page > .error-content {
+        margin-left: 190px;
+    }
+
+    .error-page > .error-content > h3 {
+        font-weight: 300;
+        font-size: 25px;
+    }
+
+    @@media (max-width: 767px) {
         .error-page > .headline {
-            float: left;
-            font-size: 100px;
-            font-weight: 300;
+            float: none;
+            text-align: center;
+            font-size: 50px;
         }
 
         .error-page > .error-content {
-            margin-left: 190px;
+            margin-left: 0;
+            text-align: center;
         }
-
-        .error-page > .error-content > h3 {
-            font-weight: 300;
-            font-size: 25px;
-        }
-
-        @@media (max-width: 767px) {
-            .error-page > .headline {
-                float: none;
-                text-align: center;
-                font-size: 50px;
-            }
-
-            .error-page > .error-content {
-                margin-left: 0;
-                text-align: center;
-            }
-        }
-    </style>
-}
+    }
+    .icon-warning::before { content: "⚠️"; }
+    .icon-arrow-left::before { content: "←"; }
+    .icon-home::before { content: "🏠"; }
+</style>

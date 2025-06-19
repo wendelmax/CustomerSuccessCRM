@@ -1,25 +1,25 @@
-@model CustomerSuccessCRM.Lib.Models.ViewModels.CrmDashboard
+@model CustomerSuccessCRM.Web.ViewModels.CrmDashboard
+@using CustomerSuccessCRM.Lib.Models
 @{
     ViewData["Title"] = "Dashboard";
 }
 
-<!-- Info boxes -->
 <div class="row">
     <div class="col-12 col-sm-6 col-md-3">
         <div class="info-box">
             <span class="info-box-icon bg-info elevation-1"><i class="fas fa-users"></i></span>
             <div class="info-box-content">
-                <span class="info-box-text">Total de Clientes</span>
+                <span class="info-box-text">Clientes</span>
                 <span class="info-box-number">@Model.TotalClientes</span>
             </div>
         </div>
     </div>
     <div class="col-12 col-sm-6 col-md-3">
         <div class="info-box">
-            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-chart-line"></i></span>
+            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-bullseye"></i></span>
             <div class="info-box-content">
-                <span class="info-box-text">Oportunidades</span>
-                <span class="info-box-number">@Model.TotalOportunidades</span>
+                <span class="info-box-text">Metas</span>
+                <span class="info-box-number">@Model.TotalMetas</span>
             </div>
         </div>
     </div>
@@ -50,14 +50,14 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-chart-area mr-1"></i>
-                    Valor das Oportunidades
+                    Valor das Metas
                 </h3>
             </div>
             <div class="card-body">
                 <div class="chart">
                     <div class="text-center">
-                        <h2 class="text-primary">R$ @Model.ValorTotalOportunidades.ToString("N2")</h2>
-                        <p class="text-muted">Valor total das oportunidades ativas</p>
+                        <h2 class="text-primary">R$ @Model.ValorTotalMetas.ToString("N2")</h2>
+                        <p class="text-muted">Valor total das metas ativas</p>
                     </div>
                 </div>
             </div>
@@ -69,7 +69,7 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-chart-pie mr-1"></i>
-                    Status das Oportunidades
+                    Status das Metas
                 </h3>
             </div>
             <div class="card-body">
@@ -79,8 +79,8 @@
                             <div class="info-box bg-success">
                                 <span class="info-box-icon"><i class="fas fa-check"></i></span>
                                 <div class="info-box-content">
-                                    <span class="info-box-text">Fechadas</span>
-                                    <span class="info-box-number">@Model.OportunidadesFechadas</span>
+                                    <span class="info-box-text">Concluídas</span>
+                                    <span class="info-box-number">@Model.MetasConcluidas</span>
                                 </div>
                             </div>
                         </div>
@@ -89,7 +89,7 @@
                                 <span class="info-box-icon"><i class="fas fa-clock"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">Em Andamento</span>
-                                    <span class="info-box-number">@Model.OportunidadesEmAndamento</span>
+                                    <span class="info-box-number">@Model.MetasEmAndamento</span>
                                 </div>
                             </div>
                         </div>
@@ -102,12 +102,12 @@
 
 <div class="row">
     <div class="col-md-8">
-        <!-- TABLE: ÚLTIMAS INTERAÇÕES -->
+        <!-- TABLE: CLIENTES RECENTES -->
         <div class="card">
             <div class="card-header border-transparent">
                 <h3 class="card-title">
-                    <i class="fas fa-comments mr-1"></i>
-                    Últimas Interações
+                    <i class="fas fa-users mr-1"></i>
+                    Clientes Recentes
                 </h3>
             </div>
             <div class="card-body p-0">
@@ -115,24 +115,24 @@
                     <table class="table m-0">
                         <thead>
                             <tr>
-                                <th>Cliente</th>
-                                <th>Tipo</th>
-                                <th>Data</th>
+                                <th>Nome</th>
+                                <th>Empresa</th>
+                                <th>Email</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if (Model.UltimasInteracoes != null && Model.UltimasInteracoes.Any())
+                            @if (Model.ClientesRecentes != null && Model.ClientesRecentes.Any())
                             {
-                                @foreach (var interacao in Model.UltimasInteracoes.Take(5))
+                                @foreach (var cliente in Model.ClientesRecentes.Take(5))
                                 {
                                     <tr>
-                                        <td>@interacao.Cliente?.Nome</td>
-                                        <td>@interacao.Tipo</td>
-                                        <td>@interacao.DataInteracao.ToString("dd/MM/yyyy")</td>
+                                        <td>@cliente.Nome</td>
+                                        <td>@cliente.Empresa</td>
+                                        <td>@cliente.Email</td>
                                         <td>
-                                            <span class="badge badge-@(interacao.Status == "Concluída" ? "success" : "warning")">
-                                                @interacao.Status
+                                            <span class="badge badge-@(cliente.Status == StatusCliente.Ativo ? "success" : "warning")">
+                                                @cliente.Status
                                             </span>
                                         </td>
                                     </tr>
@@ -141,7 +141,7 @@
                             else
                             {
                                 <tr>
-                                    <td colspan="4" class="text-center">Nenhuma interação encontrada</td>
+                                    <td colspan="4" class="text-center">Nenhum cliente encontrado</td>
                                 </tr>
                             }
                         </tbody>
@@ -149,7 +149,7 @@
                 </div>
             </div>
             <div class="card-footer clearfix">
-                <a asp-controller="Interacoes" asp-action="Index" class="btn btn-sm btn-secondary float-right">Ver Todas</a>
+                <a asp-controller="Clientes" asp-action="Index" class="btn btn-sm btn-secondary float-right">Ver Todos</a>
             </div>
         </div>
     </div>
@@ -172,7 +172,7 @@
                                 <div class="product-info">
                                     <a href="javascript:void(0)" class="product-title">
                                         @produto.Nome
-                                        <span class="badge badge-warning float-right">R$ @produto.Preco.ToString("N2")</span>
+                                        <span class="badge badge-warning float-right">R$ @produto.PrecoBase.ToString("N2")</span>
                                     </a>
                                     <span class="product-description">
                                         @produto.Descricao
