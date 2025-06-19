@@ -4,6 +4,10 @@ using CustomerSuccessCRM.Lib;
 using CustomerSuccessCRM.Lib.Data;
 using CustomerSuccessCRM.Desktop.ViewModels;
 using System;
+using CustomerSuccessCRM.Desktop.ViewModels.Dashboard;
+using CustomerSuccessCRM.Desktop.ViewModels.Clientes;
+using CustomerSuccessCRM.Desktop.ViewModels.Produtos;
+using CustomerSuccessCRM.Desktop.ViewModels.Metas;
 
 namespace CustomerSuccessCRM.Desktop;
 
@@ -21,14 +25,14 @@ class Program
         var services = new ServiceCollection();
             
         // Adicionar serviços do CRM
-        services.AddCustomerSuccessCrmServices(DatabaseConfig.GetDatabasePath());
+        services.AddCustomerSuccessCrmServices();
 
         // Registrar ViewModels
         services.AddTransient<MainWindowViewModel>();
-        // services.AddTransient<DashboardViewModel>();
-        // services.AddTransient<ClientesViewModel>();
-        // services.AddTransient<ProdutosViewModel>();
-        // services.AddTransient<MetasViewModel>();
+        services.AddTransient<DashboardViewModel>();
+        services.AddTransient<ClientesViewModel>();
+        services.AddTransient<ProdutosViewModel>();
+        services.AddTransient<MetasViewModel>();
 
         // Construir o provedor de serviços
         ServiceProvider = services.BuildServiceProvider();

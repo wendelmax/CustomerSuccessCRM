@@ -13,8 +13,12 @@ namespace CustomerSuccessCRM.Lib
             // Configuração do banco de dados SQLite
             if (string.IsNullOrEmpty(connectionString))
             {
-                connectionString = "Data Source=CustomerSuccessCRM.db";
+                // Usar o caminho do banco de dados da configuração
+                var databasePath = DatabaseConfig.GetDatabasePath();
+                connectionString = $"Data Source={databasePath}";
             }
+
+            Console.WriteLine($"Configurando banco com string: {connectionString}");
 
             services.AddDbContext<CrmDbContext>(options =>
                 options.UseSqlite(connectionString));

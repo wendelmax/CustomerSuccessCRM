@@ -3,9 +3,14 @@ using CommunityToolkit.Mvvm.Input;
 using CustomerSuccessCRM.Lib.Services;
 using CustomerSuccessCRM.Desktop.ViewModels.Dashboard;
 using CustomerSuccessCRM.Desktop.ViewModels.Clientes;
+using CustomerSuccessCRM.Desktop.ViewModels.Produtos;
+using CustomerSuccessCRM.Desktop.ViewModels.Metas;
 using CustomerSuccessCRM.Desktop.Views.Dashboard;
 using CustomerSuccessCRM.Desktop.Views.Clientes;
+using CustomerSuccessCRM.Desktop.Views.Produtos;
+using CustomerSuccessCRM.Desktop.Views.Metas;
 using System;
+using Avalonia.Controls;
 
 namespace CustomerSuccessCRM.Desktop.ViewModels;
 
@@ -58,15 +63,19 @@ public partial class MainWindowViewModel : ViewModelBase
     private void ShowProdutos()
     {
         CurrentPage = "Produtos";
-        // TODO: Implementar ViewModel e View de Produtos
-        CurrentView = null;
+        CurrentView = new ProdutosView
+        {
+            DataContext = new ProdutosViewModel(_produtoService)
+        };
     }
 
     [RelayCommand]
     private void ShowMetas()
     {
         CurrentPage = "Metas";
-        // TODO: Implementar ViewModel e View de Metas
-        CurrentView = null;
+        CurrentView = new MetasView
+        {
+            DataContext = new MetasViewModel(_metaService)
+        };
     }
 }

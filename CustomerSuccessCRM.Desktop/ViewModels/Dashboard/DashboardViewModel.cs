@@ -1,10 +1,10 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using CustomerSuccessCRM.Lib.Services;
-using CustomerSuccessCRM.Lib.Models;
+using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CustomerSuccessCRM.Lib.Models;
+using CustomerSuccessCRM.Lib.Services;
 
 namespace CustomerSuccessCRM.Desktop.ViewModels.Dashboard;
 
@@ -24,16 +24,13 @@ public partial class DashboardViewModel : ViewModelBase
     private int _totalMetas;
 
     [ObservableProperty]
-    private int _metasConcluidas;
+    private decimal _percentualConclusao;
 
     [ObservableProperty]
-    private double _percentualConclusao;
+    private ObservableCollection<Cliente> _clientesRecentes = new();
 
     [ObservableProperty]
-    private ObservableCollection<Cliente> _clientesRecentes;
-
-    [ObservableProperty]
-    private ObservableCollection<Meta> _metasPendentes;
+    private ObservableCollection<MetaViewModel> _metas = new();
 
     [ObservableProperty]
     private bool _isLoading;
@@ -47,42 +44,55 @@ public partial class DashboardViewModel : ViewModelBase
         _produtoService = produtoService;
         _metaService = metaService;
 
-        _clientesRecentes = new ObservableCollection<Cliente>();
-        _metasPendentes = new ObservableCollection<Meta>();
-
-        LoadDashboardDataCommand.Execute(null);
+        LoadDashboardData();
     }
 
-    [RelayCommand]
-    private async Task LoadDashboardData()
+    private async void LoadDashboardData()
     {
-        IsLoading = true;
-
         try
         {
-            // Carregar estatísticas
+            IsLoading = true;
+
+            // Carregar totais
             var clientes = await _clienteService.ListarTodosAsync();
             var produtos = await _produtoService.ListarTodosAsync();
             var metas = await _metaService.ListarTodasAsync();
 
-            TotalClientes = clientes.Count;
-            TotalProdutos = produtos.Count;
-            TotalMetas = metas.Count;
-            MetasConcluidas = metas.Count(m => m.Status == StatusMeta.Concluida);
-            PercentualConclusao = TotalMetas > 0 ? (double)MetasConcluidas / TotalMetas * 100 : 0;
+            TotalClientes = clientes.Count();
+            TotalProdutos = produtos.Count();
+            TotalMetas = metas.Count();
 
-            // Carregar dados recentes
+            // Calcular percentual de conclusão (exemplo: metas concluídas)
+            var metasConcluidas = metas.Count(m => m.Status == StatusMeta.Concluida);
+            PercentualConclusao = TotalMetas > 0 
+                ? Math.Round((decimal)metasConcluidas / TotalMetas * 100, 1)
+                : 0;
+
+            // Carregar clientes recentes (últimos 5)
             var clientesRecentes = clientes.OrderByDescending(c => c.DataCadastro).Take(5);
-            var metasPendentes = metas.Where(m => m.Status == StatusMeta.EmAndamento).Take(5);
-
             ClientesRecentes.Clear();
-            MetasPendentes.Clear();
-
             foreach (var cliente in clientesRecentes)
+            {
                 ClientesRecentes.Add(cliente);
+            }
 
-            foreach (var meta in metasPendentes)
-                MetasPendentes.Add(meta);
+            // Carregar metas com progresso
+            var metasAtivas = metas.Where(m => m.Status != StatusMeta.Concluida).Take(5);
+            Metas.Clear();
+            foreach (var meta in metasAtivas)
+            {
+                Metas.Add(new MetaViewModel
+                {
+                    Id = meta.Id,
+                    Descricao = meta.Descricao,
+                    PercentualConclusao = CalcularPercentualConclusao(meta)
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            // TODO: Implementar tratamento de erro adequado
+            Console.WriteLine($"Erro ao carregar dados do dashboard: {ex.Message}");
         }
         finally
         {
@@ -90,9 +100,16 @@ public partial class DashboardViewModel : ViewModelBase
         }
     }
 
-    [RelayCommand]
-    private void RefreshData()
+    private decimal CalcularPercentualConclusao(Meta meta)
     {
-        LoadDashboardDataCommand.Execute(null);
+        if (meta.Valor <= 0) return 0;
+        return Math.Round((meta.Progresso / meta.Valor) * 100, 1);
     }
+}
+
+public class MetaViewModel
+{
+    public int Id { get; set; }
+    public string Descricao { get; set; } = "";
+    public decimal PercentualConclusao { get; set; }
 } 

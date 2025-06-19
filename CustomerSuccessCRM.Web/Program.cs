@@ -7,8 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Configurar serviços do CRM
-var connectionString = DatabaseConfig.GetDatabasePath();
-builder.Services.AddCustomerSuccessCrmServices(connectionString);
+builder.Services.AddCustomerSuccessCrmServices();
 
 var app = builder.Build();
 

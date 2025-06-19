@@ -8,47 +8,17 @@ namespace CustomerSuccessCRM.Lib.Data
     {
         public static string GetDatabasePath()
         {
-            // Diretório base para o banco de dados
-            string baseDir;
-
-            // Em ambiente de desenvolvimento, usa o diretório da solução
-            if (IsDevelopmentEnvironment())
-            {
-                // Tenta encontrar o diretório Database na raiz da solução
-                var currentDir = Directory.GetCurrentDirectory();
-                var solutionDir = FindSolutionDirectory(currentDir);
-                
-                if (solutionDir != null)
-                {
-                    baseDir = Path.Combine(solutionDir, "Database");
-                }
-                else
-                {
-                    // Fallback: usa o diretório atual
-                    baseDir = Path.Combine(currentDir, "Database");
-                }
-            }
-            else
-            {
-                // Em produção, usa o diretório AppData do usuário
-                baseDir = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "CustomerSuccessCRM",
-                    "Database"
-                );
-            }
+            // Para simplificar, vamos usar sempre o diretório Database na raiz
+            var solutionDir = FindSolutionDirectory(Directory.GetCurrentDirectory());
+            var baseDir = solutionDir != null 
+                ? Path.Combine(solutionDir, "Database")
+                : Path.Combine(Directory.GetCurrentDirectory(), "Database");
 
             // Garante que o diretório existe
             Directory.CreateDirectory(baseDir);
 
             // Retorna o caminho completo do banco de dados
             return Path.Combine(baseDir, "crm.db");
-        }
-
-        private static bool IsDevelopmentEnvironment()
-        {
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            return env == "Development" || env == null || env == "";
         }
 
         private static string? FindSolutionDirectory(string startDirectory)
@@ -74,8 +44,13 @@ namespace CustomerSuccessCRM.Lib.Data
 
         public static void ConfigureDatabase(DbContextOptionsBuilder options)
         {
-            var dbPath = GetDatabasePath();
-            var connectionString = $"Data Source={dbPath}";
+            // Para teste, vamos usar uma string de conexão hardcoded
+            var connectionString = "Data Source=\"crm.db\"";
+            
+            Console.WriteLine($"String de conexão: {connectionString}");
+            Console.WriteLine($"Diretório atual: {Directory.GetCurrentDirectory()}");
+            Console.WriteLine($"Bytes da string: {string.Join(", ", System.Text.Encoding.UTF8.GetBytes(connectionString))}");
+            
             options.UseSqlite(connectionString);
         }
 
@@ -84,11 +59,13 @@ namespace CustomerSuccessCRM.Lib.Data
             try
             {
                 context.Database.EnsureCreated();
+                Console.WriteLine("Banco de dados criado com sucesso!");
             }
             catch (Exception ex)
             {
                 // Log do erro para debug
                 Console.WriteLine($"Erro ao criar banco de dados: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 throw;
             }
         }

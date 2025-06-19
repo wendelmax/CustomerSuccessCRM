@@ -9,10 +9,6 @@ namespace CustomerSuccessCRM.Lib.Data
         {
         }
 
-        public CrmDbContext()
-        {
-        }
-
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Produto> Produtos { get; set; }
         public DbSet<Meta> Metas { get; set; }
@@ -76,14 +72,6 @@ namespace CustomerSuccessCRM.Lib.Data
                 entity.Property(e => e.VendedorId).HasMaxLength(100);
                 entity.Property(e => e.DataCriacao).IsRequired().HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                DatabaseConfig.ConfigureDatabase(optionsBuilder);
-            }
         }
     }
 } 
