@@ -3,12 +3,8 @@ using CustomerSuccessCRM.Lib.Models;
 
 namespace CustomerSuccessCRM.Lib.Data
 {
-    public class CrmDbContext : DbContext
+    public class CrmDbContext(DbContextOptions<CrmDbContext> options) : DbContext(options)
     {
-        public CrmDbContext(DbContextOptions<CrmDbContext> options) : base(options)
-        {
-        }
-
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Produto> Produtos { get; set; }
         public DbSet<Meta> Metas { get; set; }
@@ -19,7 +15,7 @@ namespace CustomerSuccessCRM.Lib.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configurações básicas dos modelos
+            // Configurações básicas dos modelos para SQLite
             modelBuilder.Entity<Cliente>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -34,7 +30,7 @@ namespace CustomerSuccessCRM.Lib.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Nome).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Descricao).HasMaxLength(500);
-                entity.Property(e => e.PrecoBase).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.PrecoBase).HasColumnType("REAL");
             });
 
             modelBuilder.Entity<Meta>(entity =>
@@ -42,8 +38,8 @@ namespace CustomerSuccessCRM.Lib.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Nome).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Descricao).HasMaxLength(500);
-                entity.Property(e => e.Valor).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.Progresso).HasColumnType("decimal(5,2)");
+                entity.Property(e => e.Valor).HasColumnType("REAL");
+                entity.Property(e => e.Progresso).HasColumnType("REAL");
             });
 
             modelBuilder.Entity<Interacao>(entity =>
@@ -59,9 +55,18 @@ namespace CustomerSuccessCRM.Lib.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Titulo).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Descricao).HasMaxLength(1000);
-                entity.Property(e => e.Valor).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.Valor).HasColumnType("REAL");
                 entity.Property(e => e.VendedorId).HasMaxLength(100);
             });
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                // Configuração padrão para SQLite (usado apenas se não for configurado externamente)
+                optionsBuilder.UseSqlite("Data Source=CustomerSuccessCRM.db");
+            }
         }
     }
 } 
