@@ -1,113 +1,101 @@
-# CustomerSuccessCRM.Lib
+# CustomerSuccessCRM - Projeto Acadêmico Simplificado
 
-Biblioteca compartilhada para o sistema CRM de Gestão de Relacionamento com o Cliente.
+Este é um projeto CRM simplificado desenvolvido para fins acadêmicos, focado em ensinar conceitos básicos de C#, Entity Framework Core e arquitetura em camadas.
 
-## Visão Geral
+## Estrutura Simplificada
 
-Esta biblioteca contém todas as entidades, repositórios, serviços e configurações necessárias para o funcionamento do sistema CRM. Ela é compartilhada entre os projetos Windows Forms e Web.
+### Repositórios
+- **IBaseRepository**: Interface base simples sem generics
+- **BaseRepository**: Implementação base com métodos CRUD básicos
+- **IClienteRepository**: Interface específica para clientes
+- **ClienteRepository**: Implementação do repositório de clientes
+- **IProdutoRepository**: Interface específica para produtos
+- **ProdutoRepository**: Implementação do repositório de produtos
+- **IMetaRepository**: Interface específica para metas
+- **MetaRepository**: Implementação do repositório de metas
 
-## Estrutura do Projeto
+### Serviços
+- **ClienteService**: Lógica de negócio para clientes
+- **ProdutoService**: Lógica de negócio para produtos
+- **MetaService**: Lógica de negócio para metas
 
-### Models
-- **Cliente**: Entidade principal para gerenciar informações dos clientes
-- **Interacao**: Registra todas as interações com os clientes (chamadas, emails, reuniões, etc.)
-- **Oportunidade**: Gerencia oportunidades de vendas e negócios
-- **Produto**: Produtos/serviços oferecidos pela empresa
-- **CrmDashboard**: Dados para relatórios e métricas do dashboard
+### Modelos
+- **Cliente**: Modelo simplificado de cliente
+- **Produto**: Modelo simplificado de produto
+- **Meta**: Modelo simplificado de meta
+- **Interacao**: Modelo simplificado de interação
+- **Oportunidade**: Modelo simplificado de oportunidade
 
-### Data
-- **CrmDbContext**: Contexto do Entity Framework para gerenciar o banco de dados SQLite
+## Conceitos Demonstrados
 
-### Repositories
-- **IRepository<T>**: Interface base para operações CRUD
-- **Repository<T>**: Implementação base do repositório
-- **IClienteRepository/ClienteRepository**: Repositório específico para clientes
-- **IInteracaoRepository/InteracaoRepository**: Repositório específico para interações
-- **IOportunidadeRepository/OportunidadeRepository**: Repositório específico para oportunidades
-- **IProdutoRepository/ProdutoRepository**: Repositório específico para produtos
+1. **Padrão Repository**: Separação entre acesso a dados e lógica de negócio
+2. **Injeção de Dependência**: Uso de interfaces para desacoplamento
+3. **Entity Framework Core**: ORM para acesso a banco de dados
+4. **Async/Await**: Programação assíncrona
+5. **Validações**: Validações básicas de entrada
+6. **Enums**: Uso de enums para status e tipos
 
-### Services
-- **ICrmService/CrmService**: Serviço principal que coordena todas as operações do CRM
+## Funcionalidades Básicas
 
-### Configuration
-- **ServiceCollectionExtensions**: Extensões para configurar injeção de dependências
+### Clientes
+- Cadastrar, atualizar e deletar clientes
+- Buscar por status e vendedor
+- Ativar/desativar clientes
+- Contar clientes ativos
 
-## Funcionalidades Principais
+### Produtos
+- Cadastrar, atualizar e deletar produtos
+- Buscar por categoria e faixa de preço
+- Atualizar preços e estoque
+- Listar produtos mais vendidos
+- Calcular valor total em estoque
 
-### Gestão de Clientes
-- Cadastro, edição e exclusão de clientes
-- Busca por nome, email, empresa, telefone
-- Filtros por status (Ativo, Inativo, Prospecto, Cliente VIP)
-- Histórico de interações e oportunidades
+### Metas
+- Cadastrar, atualizar e deletar metas
+- Atualizar progresso
+- Buscar por responsável e equipe
+- Listar metas atrasadas
+- Calcular percentual de atingimento
 
-### Gestão de Interações
-- Registro de diferentes tipos de interação (Telefone, Email, Reunião, Visita, Chat)
-- Controle de prioridade e status
-- Associação a clientes específicos
-- Filtros por tipo, status, responsável e período
+## Como Usar
 
-### Gestão de Oportunidades
-- Criação e acompanhamento de oportunidades de vendas
-- Controle de fases (Prospecção, Qualificação, Proposta, Negociação, Fechada, Perdida)
-- Cálculo de probabilidade de sucesso
-- Métricas de conversão e valores
+1. Configure a string de conexão no `appsettings.json`
+2. Execute as migrações do Entity Framework
+3. Registre os serviços no container de DI
+4. Use os serviços nos controllers
 
-### Gestão de Produtos
-- Cadastro de produtos e serviços
-- Categorização por tipo
-- Controle de preços e status ativo/inativo
+## Exemplo de Uso
 
-### Relatórios e Métricas
-- Dashboard com métricas principais
-- Total de clientes, interações, oportunidades
-- Taxa de conversão de vendas
-- Dados para gráficos e análises
-
-## Configuração
-
-### Para Windows Forms
 ```csharp
-// No Program.cs ou onde configurar os serviços
-services.AddCrmServices("Data Source=crm.db");
+// No controller
+public class ClientesController : Controller
+{
+    private readonly ClienteService _clienteService;
+
+    public ClientesController(ClienteService clienteService)
+    {
+        _clienteService = clienteService;
+    }
+
+    public async Task<IActionResult> Index()
+    {
+        var clientes = await _clienteService.ListarTodosAsync();
+        return View(clientes);
+    }
+}
 ```
 
-### Para Web
+## Configuração do DI
+
 ```csharp
 // No Program.cs
-builder.Services.AddCrmServices(builder.Configuration.GetConnectionString("DefaultConnection"));
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IMetaRepository, MetaRepository>();
+
+builder.Services.AddScoped<ClienteService>();
+builder.Services.AddScoped<ProdutoService>();
+builder.Services.AddScoped<MetaService>();
 ```
 
-### Para Testes
-```csharp
-services.AddCrmServicesInMemory();
-```
-
-## Dependências
-
-- Microsoft.EntityFrameworkCore (8.0.0)
-- Microsoft.EntityFrameworkCore.Sqlite (8.0.0)
-- Microsoft.EntityFrameworkCore.Tools (8.0.0)
-- Microsoft.EntityFrameworkCore.Design (8.0.0)
-
-## Banco de Dados
-
-O sistema utiliza SQLite como banco de dados principal, oferecendo:
-- Facilidade de deploy (arquivo único)
-- Não requer instalação de servidor
-- Suporte completo a transações ACID
-- Compatibilidade com Entity Framework Core
-
-## Dados Iniciais
-
-A biblioteca inclui dados de exemplo para:
-- 3 produtos iniciais (CRM Básico, CRM Premium, Consultoria)
-- 3 clientes de exemplo com diferentes status
-- Configurações de relacionamentos entre entidades
-
-## Próximos Passos
-
-1. Implementar o projeto Windows Forms
-2. Implementar o projeto Web
-3. Adicionar funcionalidades de exportação de relatórios
-4. Implementar sistema de notificações
-5. Adicionar autenticação e autorização 
+Este projeto é ideal para estudantes que estão aprendendo C# e querem entender conceitos básicos de arquitetura de software de forma prática e didática. 

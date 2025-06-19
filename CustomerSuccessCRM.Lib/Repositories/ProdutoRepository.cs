@@ -4,83 +4,98 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CustomerSuccessCRM.Lib.Repositories
 {
-    public class ProdutoRepository(CrmDbContext context) : Repository<Produto>(context), IProdutoRepository
+    public class ProdutoRepository : BaseRepository, IProdutoRepository
     {
-        public async Task<IEnumerable<Produto>> GetProdutosPorCategoriaAsync(CategoriaProduto categoria)
+        private readonly DbSet<Produto> _produtos;
+
+        public ProdutoRepository(CrmDbContext context) : base(context, "Produtos")
         {
-            return await _dbSet
+            _produtos = context.Set<Produto>();
+        }
+
+        public override async Task<bool> ExisteAsync(int id)
+        {
+            return await _produtos.FindAsync(id) != null;
+        }
+
+        public override async Task<bool> AdicionarAsync(object entidade)
+        {
+            if (entidade is Produto produto)
+            {
+                await _produtos.AddAsync(produto);
+                return await SaveChangesAsync();
+            }
+            return false;
+        }
+
+        public override async Task<bool> AtualizarAsync(object entidade)
+        {
+            if (entidade is Produto produto)
+            {
+                _produtos.Update(produto);
+                return await SaveChangesAsync();
+            }
+            return false;
+        }
+
+        public override async Task<bool> DeletarAsync(int id)
+        {
+            var produto = await _produtos.FindAsync(id);
+            if (produto == null) return false;
+
+            _produtos.Remove(produto);
+            return await SaveChangesAsync();
+        }
+
+        public async Task<List<Produto>> BuscarTodosAsync()
+        {
+            return await _produtos
+                .Where(p => p.Ativo)
+                .ToListAsync();
+        }
+
+        public async Task<Produto> BuscarPorIdAsync(int id)
+        {
+            return await _produtos.FindAsync(id);
+        }
+
+        public async Task<List<Produto>> BuscarPorCategoriaAsync(CategoriaProduto categoria)
+        {
+            return await _produtos
                 .Where(p => p.Categoria == categoria && p.Ativo)
                 .OrderBy(p => p.Nome)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Produto>> GetProdutosPorFaixaPrecoAsync(decimal precoMinimo, decimal precoMaximo)
+        public async Task<List<Produto>> BuscarPorFaixaPrecoAsync(decimal precoMinimo, decimal precoMaximo)
         {
-            return await _dbSet
+            return await _produtos
                 .Where(p => p.PrecoBase >= precoMinimo && p.PrecoBase <= precoMaximo && p.Ativo)
                 .OrderBy(p => p.PrecoBase)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Produto>> GetProdutosPorTipoPrecificacaoAsync(TipoPrecificacao tipo)
+        public async Task<List<Produto>> BuscarMaisVendidosAsync(int quantidade)
         {
-            return await _dbSet
-                .Where(p => p.TipoPrecificacao == tipo && p.Ativo)
-                .OrderBy(p => p.Nome)
+            return await _produtos
+                .Where(p => p.Ativo)
+                .OrderByDescending(p => p.QuantidadeVendida)
+                .Take(quantidade)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Produto>> GetProdutosBundleAsync(int bundleId)
+        public async Task<decimal> CalcularValorTotalEstoqueAsync()
         {
-            var bundle = await _context.ProdutoBundles
-                .Include(b => b.Produtos)
-                .FirstOrDefaultAsync(b => b.Id == bundleId);
-
-            return bundle?.Produtos ?? new List<Produto>();
-        }
-
-        public async Task<IEnumerable<ProdutoVariacao>> GetVariacoesProdutoAsync(int produtoId)
-        {
-            return await _context.ProdutoVariacoes
-                .Where(v => v.ProdutoId == produtoId)
+            var produtos = await _produtos
+                .Where(p => p.Ativo)
                 .ToListAsync();
+
+            return produtos.Sum(p => p.PrecoBase * p.QuantidadeEstoque);
         }
 
-        public async Task<IEnumerable<ProdutoPreco>> GetPrecosProdutoAsync(int produtoId)
+        public async Task<Dictionary<CategoriaProduto, int>> CalcularDistribuicaoPorCategoriaAsync()
         {
-            return await _context.ProdutoPrecos
-                .Where(p => p.ProdutoId == produtoId)
-                .OrderByDescending(p => p.DataInicio)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<ProdutoBundle>> GetBundlesProdutoAsync(int produtoId)
-        {
-            return await _context.ProdutoBundles
-                .Include(b => b.Produtos)
-                .Where(b => b.Produtos.Any(p => p.Id == produtoId))
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Produto>> GetProdutosComDescontoAsync()
-        {
-            return await _dbSet
-                .Include(p => p.Precos)
-                .Where(p => p.Ativo && p.Precos.Any(pr => pr.Produto.PercentualDesconto > 0))
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Produto>> GetProdutosEmBundleAsync()
-        {
-            return await _dbSet
-                .Include(p => p.Bundles)
-                .Where(p => p.Ativo && p.Bundles.Any())
-                .ToListAsync();
-        }
-
-        public async Task<IDictionary<CategoriaProduto, int>> GetDistribuicaoPorCategoriaAsync()
-        {
-            return await _dbSet
+            return await _produtos
                 .Where(p => p.Ativo)
                 .GroupBy(p => p.Categoria)
                 .ToDictionaryAsync(
@@ -89,47 +104,20 @@ namespace CustomerSuccessCRM.Lib.Repositories
                 );
         }
 
-        public async Task<decimal> GetValorTotalEmEstoqueAsync()
+        public async Task<List<Produto>> BuscarPorNomeAsync(string nome)
         {
-            var produtos = await _dbSet
-                .Where(p => p.Ativo)
-                .ToListAsync();
-
-            return produtos.Sum(p => p.PrecoBase * p.QuantidadeEstoque);
-        }
-
-        public async Task<IDictionary<string, decimal>> GetHistoricoPrecosProdutoAsync(int produtoId)
-        {
-            var precos = await _context.ProdutoPrecos
-                .Where(p => p.ProdutoId == produtoId)
-                .OrderBy(p => p.DataInicio)
-                .ToListAsync();
-
-            return precos.ToDictionary(
-                p => p.DataInicio.ToString("yyyy-MM-dd"),
-                p => p.Valor
-            );
-        }
-
-        public async Task<IEnumerable<Produto>> GetProdutosMaisVendidosAsync(int quantidade)
-        {
-            return await _dbSet
-                .Include(p => p.QuantidadeVendida)
-                .Where(p => p.Ativo)
-                .OrderByDescending(p => p.QuantidadeVendida)
-                .Take(quantidade)
+            return await _produtos
+                .Where(p => p.Nome.Contains(nome) && p.Ativo)
+                .OrderBy(p => p.Nome)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ProdutoBundle>> GetBundlesMaisVendidosAsync(int quantidade)
+        public async Task<List<Produto>> BuscarPorPrecoMaximoAsync(decimal precoMaximo)
         {
-            return await _dbSet
-                .Include(p => p.Bundles)
-                .Where(p => p.Ativo)
-                .OrderByDescending(p => p.QuantidadeVendida)
-                .Take(quantidade)
+            return await _produtos
+                .Where(p => p.PrecoBase <= precoMaximo && p.Ativo)
+                .OrderBy(p => p.PrecoBase)
                 .ToListAsync();
-                
         }
     }
 } 

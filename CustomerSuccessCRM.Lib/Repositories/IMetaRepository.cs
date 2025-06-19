@@ -2,17 +2,16 @@ using CustomerSuccessCRM.Lib.Models;
 
 namespace CustomerSuccessCRM.Lib.Repositories
 {
-    public interface IMetaRepository : IRepository<Meta>
+    public interface IMetaRepository : IBaseRepository
     {
-        Task<IEnumerable<Meta>> GetMetasByResponsavelAsync(string responsavelId);
-        Task<IEnumerable<Meta>> GetMetasByEquipeAsync(string equipeId);
-        Task<IEnumerable<Meta>> GetMetasByPeriodoAsync(DateTime inicio, DateTime fim);
-        Task<IEnumerable<Meta>> GetMetasAtrasadasAsync();
-        Task<IEnumerable<Meta>> GetMetasProximasVencerAsync(int dias);
-        Task<decimal> GetPercentualAtingimentoGeralAsync(string? equipeId = null);
-        Task<IEnumerable<MetaHistorico>> GetHistoricoMetaAsync(int metaId);
-        Task<IDictionary<TipoMeta, decimal>> GetAtingimentoPorTipoAsync();
-        Task<IDictionary<string, decimal>> GetAtingimentoPorEquipeAsync();
-        Task<IEnumerable<Meta>> GetMetasRecorrentesAsync();
+        Task<List<Meta>> BuscarTodasAsync();
+        Task<Meta> BuscarPorIdAsync(int id);
+        Task<List<Meta>> BuscarPorResponsavelAsync(string responsavelId);
+        Task<List<Meta>> BuscarPorEquipeAsync(string equipeId);
+        Task<List<Meta>> BuscarAtrasadasAsync();
+        Task<decimal> CalcularPercentualAtingimentoAsync(string? equipeId = null);
+        Task<List<Meta>> BuscarPorPeriodoAsync(DateTime inicio, DateTime fim);
+        Task<List<Meta>> BuscarProximasVencerAsync(int dias);
+        Task<Dictionary<string, decimal>> CalcularAtingimentoPorEquipeAsync();
     }
 } 

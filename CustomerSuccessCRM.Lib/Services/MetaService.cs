@@ -1,58 +1,67 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CustomerSuccessCRM.Lib.Models;
-using Microsoft.Extensions.Options;
-using CustomerSuccessCRM.Lib.Configuration;
 using CustomerSuccessCRM.Lib.Repositories;
 
-namespace CustomerSuccessCRM.Lib.Services.Implementations
+namespace CustomerSuccessCRM.Lib.Services
 {
-    public class MetaService : IMetaService
+    public class MetaService
     {
         private readonly IMetaRepository _repository;
-        private readonly MetaSettings _settings;
-        private readonly INotificationService _notificationService;
 
-        public MetaService(
-            IMetaRepository repository,
-            IOptions<MetaSettings> settings,
-            INotificationService notificationService)
+        public MetaService(IMetaRepository repository)
         {
             _repository = repository;
-            _settings = settings.Value;
-            _notificationService = notificationService;
         }
 
-        public async Task<IEnumerable<Meta>> GetAllMetasAsync()
+        public async Task<List<Meta>> ListarTodasAsync()
         {
-            return await _repository.GetAllAsync();
+            return await _repository.BuscarTodasAsync();
         }
 
-        public async Task<Meta?> GetMetaByIdAsync(int id)
+        public async Task<Meta> BuscarPorIdAsync(int id)
         {
-            return await _repository.GetByIdAsync(id);
+            return await _repository.BuscarPorIdAsync(id);
         }
 
-        public async Task<Meta> CreateMetaAsync(Meta meta)
+        public async Task<bool> CadastrarAsync(Meta meta)
         {
-            return await _repository.AddAsync(meta);
+            if (string.IsNullOrEmpty(meta.Nome))
+                throw new ArgumentException("Nome da meta é obrigatório");
+
+            if (meta.Valor <= 0)
+                throw new ArgumentException("Valor da meta deve ser maior que zero");
+
+            if (meta.DataFim <= meta.DataInicio)
+                throw new ArgumentException("Data de fim deve ser posterior à data de início");
+
+            meta.Status = StatusMeta.EmAndamento;
+            meta.Progresso = 0;
+
+            return await _repository.AdicionarAsync(meta);
         }
 
-        public async Task<Meta> UpdateMetaAsync(Meta meta)
+        public async Task<bool> AtualizarAsync(Meta meta)
         {
-            return await _repository.UpdateAsync(meta);
+            var metaExistente = await _repository.BuscarPorIdAsync(meta.Id);
+            if (metaExistente == null)
+                throw new KeyNotFoundException($"Meta com ID {meta.Id} não encontrada");
+
+            metaExistente.Nome = meta.Nome;
+            metaExistente.Descricao = meta.Descricao;
+            metaExistente.Valor = meta.Valor;
+            metaExistente.Progresso = meta.Progresso;
+            metaExistente.Status = meta.Status;
+
+            return await _repository.AtualizarAsync(metaExistente);
         }
 
-        public async Task DeleteMetaAsync(int id)
+        public async Task<bool> DeletarAsync(int id)
         {
-            await _repository.DeleteAsync(id);
+            return await _repository.DeletarAsync(id);
         }
 
-        public async Task<Meta> AtualizarProgressoAsync(int id, decimal progresso)
+        public async Task<bool> AtualizarProgressoAsync(int id, decimal progresso)
         {
-            var meta = await GetMetaByIdAsync(id);
+            var meta = await _repository.BuscarPorIdAsync(id);
             if (meta == null)
                 throw new InvalidOperationException("Meta não encontrada");
 
@@ -60,139 +69,30 @@ namespace CustomerSuccessCRM.Lib.Services.Implementations
             if (progresso >= meta.Valor)
             {
                 meta.Status = StatusMeta.Concluida;
-                await NotificarMetaAtingidaAsync(id);
+                meta.DataConclusao = DateTime.Now;
             }
-            return await _repository.UpdateAsync(meta);
+
+            return await _repository.AtualizarAsync(meta);
         }
 
-        public async Task<Meta> ConcluirMetaAsync(int id)
+        public async Task<List<Meta>> BuscarPorResponsavelAsync(string responsavelId)
         {
-            var meta = await GetMetaByIdAsync(id);
-            if (meta == null)
-                throw new InvalidOperationException("Meta não encontrada");
-
-            meta.Status = StatusMeta.Concluida;
-            meta.DataConclusao = DateTime.Now;
-            await NotificarMetaAtingidaAsync(id);
-            return await _repository.UpdateAsync(meta);
+            return await _repository.BuscarPorResponsavelAsync(responsavelId);
         }
 
-        public async Task<Meta> CancelarMetaAsync(int id, string motivo)
+        public async Task<List<Meta>> BuscarPorEquipeAsync(string equipeId)
         {
-            var meta = await GetMetaByIdAsync(id);
-            if (meta == null)
-                throw new InvalidOperationException("Meta não encontrada");
-
-            meta.Status = StatusMeta.Cancelada;
-            meta.Observacoes = motivo;
-            return await _repository.UpdateAsync(meta);
+            return await _repository.BuscarPorEquipeAsync(equipeId);
         }
 
-        public async Task<IEnumerable<Meta>> GetMetasPorResponsavelAsync(string responsavelId)
+        public async Task<List<Meta>> ListarAtrasadasAsync()
         {
-            return await _repository.GetMetasByResponsavelAsync(responsavelId);
+            return await _repository.BuscarAtrasadasAsync();
         }
 
-        public async Task<IEnumerable<Meta>> GetMetasPorEquipeAsync(string equipeId)
+        public async Task<decimal> CalcularPercentualAtingimentoAsync(string? equipeId = null)
         {
-            return await _repository.GetMetasByEquipeAsync(equipeId);
-        }
-
-        public async Task<IEnumerable<Meta>> GetMetasPorPeriodoAsync(DateTime inicio, DateTime fim)
-        {
-            return await _repository.GetMetasByPeriodoAsync(inicio, fim);
-        }
-
-        public async Task<IEnumerable<Meta>> GetMetasAtrasadasAsync()
-        {
-            return await _repository.GetMetasAtrasadasAsync();
-        }
-
-        public async Task<IEnumerable<Meta>> GetMetasProximasVencerAsync(int dias)
-        {
-            return await _repository.GetMetasProximasVencerAsync(dias);
-        }
-
-        public async Task<decimal> GetPercentualAtingimentoGeralAsync(string? equipeId = null)
-        {
-            return await _repository.GetPercentualAtingimentoGeralAsync(equipeId);
-        }
-
-        public async Task<IEnumerable<MetaHistorico>> GetHistoricoMetaAsync(int metaId)
-        {
-            return await _repository.GetHistoricoMetaAsync(metaId);
-        }
-
-        public async Task<IDictionary<TipoMeta, decimal>> GetAtingimentoPorTipoAsync()
-        {
-            return await _repository.GetAtingimentoPorTipoAsync();
-        }
-
-        public async Task<IDictionary<string, decimal>> GetAtingimentoPorEquipeAsync()
-        {
-            return await _repository.GetAtingimentoPorEquipeAsync();
-        }
-
-        public async Task<IEnumerable<Meta>> GetMetasRecorrentesAsync()
-        {
-            return await _repository.GetMetasRecorrentesAsync();
-        }
-
-        public async Task NotificarMetaAtingidaAsync(int id)
-        {
-            var meta = await GetMetaByIdAsync(id);
-            if (meta == null) return;
-
-            await _notificationService.EnviarNotificacaoAsync(
-                meta.ResponsavelId,
-                "Meta Atingida",
-                $"Parabéns! A meta {meta.Nome} foi atingida.");
-
-            if (!string.IsNullOrEmpty(meta.EquipeId))
-            {
-                await _notificationService.EnviarNotificacaoAsync(
-                    meta.EquipeId,
-                    "Meta da Equipe Atingida",
-                    $"A meta {meta.Nome} foi atingida pela equipe.");
-            }
-        }
-
-        public async Task NotificarMetaAtrasadaAsync(int id)
-        {
-            var meta = await GetMetaByIdAsync(id);
-            if (meta == null) return;
-
-            await _notificationService.EnviarNotificacaoAsync(
-                meta.ResponsavelId,
-                "Meta Atrasada",
-                $"Atenção! A meta {meta.Nome} está atrasada.");
-
-            if (!string.IsNullOrEmpty(meta.EquipeId))
-            {
-                await _notificationService.EnviarNotificacaoAsync(
-                    meta.EquipeId,
-                    "Meta da Equipe Atrasada",
-                    $"A meta {meta.Nome} está atrasada.");
-            }
-        }
-
-        public async Task NotificarProximaVencerAsync(int id)
-        {
-            var meta = await GetMetaByIdAsync(id);
-            if (meta == null) return;
-
-            await _notificationService.EnviarNotificacaoAsync(
-                meta.ResponsavelId,
-                "Meta Próxima de Vencer",
-                $"Atenção! A meta {meta.Nome} está próxima de vencer.");
-
-            if (!string.IsNullOrEmpty(meta.EquipeId))
-            {
-                await _notificationService.EnviarNotificacaoAsync(
-                    meta.EquipeId,
-                    "Meta da Equipe Próxima de Vencer",
-                    $"A meta {meta.Nome} está próxima de vencer.");
-            }
+            return await _repository.CalcularPercentualAtingimentoAsync(equipeId);
         }
     }
 } 

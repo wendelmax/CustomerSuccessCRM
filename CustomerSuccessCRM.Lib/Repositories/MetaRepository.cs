@@ -4,56 +4,87 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CustomerSuccessCRM.Lib.Repositories
 {
-    public class MetaRepository(CrmDbContext context) : Repository<Meta>(context), IMetaRepository
+    public class MetaRepository : BaseRepository, IMetaRepository
     {
-        public async Task<IEnumerable<Meta>> GetMetasByResponsavelAsync(string responsavelId)
+        private readonly DbSet<Meta> _metas;
+
+        public MetaRepository(CrmDbContext context) : base(context, "Metas")
         {
-            return await _dbSet
-                .Include(m => m.Responsavel)
+            _metas = context.Set<Meta>();
+        }
+
+        public override async Task<bool> ExisteAsync(int id)
+        {
+            return await _metas.FindAsync(id) != null;
+        }
+
+        public override async Task<bool> AdicionarAsync(object entidade)
+        {
+            if (entidade is Meta meta)
+            {
+                await _metas.AddAsync(meta);
+                return await SaveChangesAsync();
+            }
+            return false;
+        }
+
+        public override async Task<bool> AtualizarAsync(object entidade)
+        {
+            if (entidade is Meta meta)
+            {
+                _metas.Update(meta);
+                return await SaveChangesAsync();
+            }
+            return false;
+        }
+
+        public override async Task<bool> DeletarAsync(int id)
+        {
+            var meta = await _metas.FindAsync(id);
+            if (meta == null) return false;
+
+            _metas.Remove(meta);
+            return await SaveChangesAsync();
+        }
+
+        public async Task<List<Meta>> BuscarTodasAsync()
+        {
+            return await _metas.ToListAsync();
+        }
+
+        public async Task<Meta> BuscarPorIdAsync(int id)
+        {
+            return await _metas.FindAsync(id);
+        }
+
+        public async Task<List<Meta>> BuscarPorResponsavelAsync(string responsavelId)
+        {
+            return await _metas
                 .Where(m => m.ResponsavelId == responsavelId)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Meta>> GetMetasByEquipeAsync(string equipeId)
+        public async Task<List<Meta>> BuscarPorEquipeAsync(string equipeId)
         {
-            return await _dbSet
-                .Include(m => m.Equipe)
-                .Where(m => equipeId.Equals(m.EquipeId))
+            return await _metas
+                .Where(m => m.EquipeId == equipeId)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Meta>> GetMetasByPeriodoAsync(DateTime inicio, DateTime fim)
-        {
-            return await _dbSet
-                .Include(m => m.Responsavel)
-                .Where(m => m.DataInicio >= inicio && m.DataFim <= fim)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Meta>> GetMetasAtrasadasAsync()
+        public async Task<List<Meta>> BuscarAtrasadasAsync()
         {
             var hoje = DateTime.Today;
-            return await _dbSet
-                .Include(m => m.Responsavel)
+            return await _metas
                 .Where(m => m.Status == StatusMeta.EmAndamento && m.DataFim < hoje)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Meta>> GetMetasProximasVencerAsync(int dias)
+        public async Task<decimal> CalcularPercentualAtingimentoAsync(string? equipeId = null)
         {
-            var dataLimite = DateTime.Today.AddDays(dias);
-            return await _dbSet
-                .Include(m => m.Responsavel)
-                .Where(m => m.Status == StatusMeta.EmAndamento && m.DataFim <= dataLimite)
-                .ToListAsync();
-        }
-
-        public async Task<decimal> GetPercentualAtingimentoGeralAsync(string? equipeId = null)
-        {
-            var query = _dbSet.AsQueryable();
+            var query = _metas.AsQueryable();
             if (!string.IsNullOrEmpty(equipeId))
             {
-                query = query.Where(m => equipeId.Equals(m.EquipeId));
+                query = query.Where(m => m.EquipeId == equipeId);
             }
 
             var metas = await query.ToListAsync();
@@ -65,43 +96,30 @@ namespace CustomerSuccessCRM.Lib.Repositories
             return (decimal)metasAtingidas / totalMetas * 100;
         }
 
-        public async Task<IEnumerable<MetaHistorico>> GetHistoricoMetaAsync(int metaId)
+        public async Task<List<Meta>> BuscarPorPeriodoAsync(DateTime inicio, DateTime fim)
         {
-            return await _context.MetaHistoricos
-                .Where(h => metaId == h.MetaId)
-                .OrderByDescending(h => h.Id)
+            return await _metas
+                .Where(m => m.DataInicio >= inicio && m.DataFim <= fim)
                 .ToListAsync();
         }
 
-        public async Task<IDictionary<TipoMeta, decimal>> GetAtingimentoPorTipoAsync()
+        public async Task<List<Meta>> BuscarProximasVencerAsync(int dias)
         {
-            var metas = await _dbSet.ToListAsync();
-            return metas.GroupBy(m => m.Tipo)
+            var dataLimite = DateTime.Today.AddDays(dias);
+            return await _metas
+                .Where(m => m.Status == StatusMeta.EmAndamento && m.DataFim <= dataLimite)
+                .ToListAsync();
+        }
+
+        public async Task<Dictionary<string, decimal>> CalcularAtingimentoPorEquipeAsync()
+        {
+            var metas = await _metas.ToListAsync();
+
+            return metas.GroupBy(m => m.EquipeId ?? "Sem Equipe")
                 .ToDictionary(
                     g => g.Key,
                     g => g.Count(m => m.Status == StatusMeta.Concluida) / (decimal)g.Count() * 100
                 );
-        }
-
-        public async Task<IDictionary<string, decimal>> GetAtingimentoPorEquipeAsync()
-        {
-            var metas = await _dbSet
-                .Include(m => m.Equipe)
-                .ToListAsync();
-
-            return metas.GroupBy(m => m.EquipeId)
-                .ToDictionary<IGrouping<int?, Meta>, string, decimal>(
-                    g => g.Key.ToString() ?? string.Empty,
-                    g => g.Count(m => m.Status == StatusMeta.Concluida) / (decimal)g.Count() * 100
-                );
-        }
-
-        public async Task<IEnumerable<Meta>> GetMetasRecorrentesAsync()
-        {
-            return await _dbSet
-                .Include(m => m.Responsavel)
-                .Where(m => m.Recorrente)
-                .ToListAsync();
         }
     }
 } 
