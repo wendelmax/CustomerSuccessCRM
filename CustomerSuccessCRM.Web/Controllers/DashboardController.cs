@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using CustomerSuccessCRM.Lib.Services;
+using CustomerSuccessCRM.Lib.Services.Implementations;
 using CustomerSuccessCRM.Lib.Models;
 using CustomerSuccessCRM.Web.Models;
 
@@ -7,9 +7,9 @@ namespace CustomerSuccessCRM.Web.Controllers
 {
     public class DashboardController : Controller
     {
-        private readonly ICrmService _crmService;
+        private readonly CrmService _crmService;
 
-        public DashboardController(ICrmService crmService)
+        public DashboardController(CrmService crmService)
         {
             _crmService = crmService;
         }

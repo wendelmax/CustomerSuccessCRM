@@ -1,25 +1,25 @@
+using System.Linq.Expressions;
 using CustomerSuccessCRM.Lib.Models;
-using CustomerSuccessCRM.Lib.Services.Contracts;
 using CustomerSuccessCRM.Lib.Repositories;
 
-namespace CustomerSuccessCRM.Lib.Services.Implementations
+namespace CustomerSuccessCRM.Lib.Services
 {
     public class CrmService : ICrmService
     {
-        private readonly IClienteRepository _clienteRepository;
-        private readonly IInteracaoRepository _interacaoRepository;
-        private readonly IOportunidadeRepository _oportunidadeRepository;
-        private readonly IProdutoRepository _produtoRepository;
-        private readonly INotificationService _notificationService;
-        private readonly IEmailService _emailService;
+        private readonly IRepository<Cliente> _clienteRepository;
+        private readonly IRepository<Interacao> _interacaoRepository;
+        private readonly IRepository<Oportunidade> _oportunidadeRepository;
+        private readonly IRepository<Produto> _produtoRepository;
+        private readonly NotificationService _notificationService;
+        private readonly EmailService _emailService;
 
         public CrmService(
-            IClienteRepository clienteRepository,
-            IInteracaoRepository interacaoRepository,
-            IOportunidadeRepository oportunidadeRepository,
-            IProdutoRepository produtoRepository,
-            INotificationService notificationService,
-            IEmailService emailService)
+            IRepository<Cliente> clienteRepository,
+            IRepository<Interacao> interacaoRepository,
+            IRepository<Oportunidade> oportunidadeRepository,
+            IRepository<Produto> produtoRepository,
+            NotificationService notificationService,
+            EmailService emailService)
         {
             _clienteRepository = clienteRepository;
             _interacaoRepository = interacaoRepository;
@@ -32,12 +32,16 @@ namespace CustomerSuccessCRM.Lib.Services.Implementations
         // Operações de Cliente
         public async Task<IEnumerable<Cliente>> GetAllClientesAsync()
         {
-            return await _clienteRepository.GetAllAsync();
+            return await _clienteRepository.GetAllWithIncludesAsync(
+                c => c.Interacoes,
+                c => c.Oportunidades);
         }
 
         public async Task<Cliente?> GetClienteByIdAsync(int id)
         {
-            return await _clienteRepository.GetByIdAsync(id);
+            return await _clienteRepository.GetByIdWithIncludesAsync(id,
+                c => c.Interacoes,
+                c => c.Oportunidades);
         }
 
         public async Task<Cliente> CreateClienteAsync(Cliente cliente)
@@ -60,23 +64,35 @@ namespace CustomerSuccessCRM.Lib.Services.Implementations
 
         public async Task<IEnumerable<Cliente>> SearchClientesAsync(string searchTerm)
         {
-            return await _clienteRepository.SearchAsync(searchTerm);
+            return await _clienteRepository.FindWithIncludesAsync(
+                c => c.Nome.Contains(searchTerm) || 
+                     c.Email.Contains(searchTerm) || 
+                     c.Telefone.Contains(searchTerm),
+                c => c.Interacoes,
+                c => c.Oportunidades);
         }
 
         public async Task<IEnumerable<Cliente>> GetClientesByStatusAsync(StatusCliente status)
         {
-            return await _clienteRepository.GetByStatusAsync(status);
+            return await _clienteRepository.FindWithIncludesAsync(
+                c => c.Status == status,
+                c => c.Interacoes,
+                c => c.Oportunidades);
         }
 
         // Operações de Interação
         public async Task<IEnumerable<Interacao>> GetAllInteracoesAsync()
         {
-            return await _interacaoRepository.GetAllAsync();
+            return await _interacaoRepository.GetAllWithIncludesAsync(
+                i => i.Cliente,
+                i => i.Responsavel);
         }
 
         public async Task<Interacao?> GetInteracaoByIdAsync(int id)
         {
-            return await _interacaoRepository.GetByIdAsync(id);
+            return await _interacaoRepository.GetByIdWithIncludesAsync(id,
+                i => i.Cliente,
+                i => i.Responsavel);
         }
 
         public async Task<Interacao> CreateInteracaoAsync(Interacao interacao)
@@ -86,17 +102,22 @@ namespace CustomerSuccessCRM.Lib.Services.Implementations
             
             if (result != null)
             {
+                var cliente = await _clienteRepository.GetByIdAsync(interacao.ClienteId);
+                
                 // Notificar sobre nova interação
-                await _notificationService.EnviarNotificacaoAsync(
+                await _notificationService.SendNotificationAsync(
                     interacao.Responsavel,
                     "Nova Interação Registrada",
-                    $"Uma nova interação foi registrada para o cliente {interacao.Cliente?.Nome}");
+                    $"Uma nova interação foi registrada para o cliente {cliente?.Nome}");
 
                 // Enviar email de acompanhamento
-                await _emailService.EnviarEmailAsync(
-                    interacao.Cliente?.Email,
-                    "Acompanhamento de Atendimento",
-                    $"Olá {interacao.Cliente?.Nome},\n\nRegistramos sua interação conosco sobre: {interacao.Assunto}");
+                if (cliente != null)
+                {
+                    await _emailService.SendEmailAsync(
+                        cliente.Email,
+                        "Acompanhamento de Atendimento",
+                        $"Olá {cliente.Nome},\n\nRegistramos sua interação conosco sobre: {interacao.Assunto}");
+                }
             }
 
             return result;
@@ -114,23 +135,35 @@ namespace CustomerSuccessCRM.Lib.Services.Implementations
 
         public async Task<IEnumerable<Interacao>> GetInteracoesByClienteIdAsync(int clienteId)
         {
-            return await _interacaoRepository.GetByClienteIdAsync(clienteId);
+            return await _interacaoRepository.FindWithIncludesAsync(
+                i => i.ClienteId == clienteId,
+                i => i.Cliente,
+                i => i.Responsavel);
         }
 
         public async Task<IEnumerable<Interacao>> GetInteracoesPendentesAsync()
         {
-            return await _interacaoRepository.GetInteracoesPendentesAsync();
+            return await _interacaoRepository.FindWithIncludesAsync(
+                i => i.Status == StatusInteracao.Pendente,
+                i => i.Cliente,
+                i => i.Responsavel);
         }
 
         // Operações de Oportunidade
         public async Task<IEnumerable<Oportunidade>> GetAllOportunidadesAsync()
         {
-            return await _oportunidadeRepository.GetAllAsync();
+            return await _oportunidadeRepository.GetAllWithIncludesAsync(
+                o => o.Cliente,
+                o => o.Responsavel,
+                o => o.Produtos);
         }
 
         public async Task<Oportunidade?> GetOportunidadeByIdAsync(int id)
         {
-            return await _oportunidadeRepository.GetByIdAsync(id);
+            return await _oportunidadeRepository.GetByIdWithIncludesAsync(id,
+                o => o.Cliente,
+                o => o.Responsavel,
+                o => o.Produtos);
         }
 
         public async Task<Oportunidade> CreateOportunidadeAsync(Oportunidade oportunidade)
@@ -140,11 +173,13 @@ namespace CustomerSuccessCRM.Lib.Services.Implementations
             
             if (result != null)
             {
+                var cliente = await _clienteRepository.GetByIdAsync(oportunidade.ClienteId);
+                
                 // Notificar sobre nova oportunidade
-                await _notificationService.EnviarNotificacaoAsync(
+                await _notificationService.SendNotificationAsync(
                     oportunidade.Responsavel,
                     "Nova Oportunidade Registrada",
-                    $"Uma nova oportunidade foi registrada para o cliente {oportunidade.Cliente?.Nome}");
+                    $"Uma nova oportunidade foi registrada para o cliente {cliente?.Nome}");
             }
 
             return result;
@@ -162,35 +197,49 @@ namespace CustomerSuccessCRM.Lib.Services.Implementations
 
         public async Task<IEnumerable<Oportunidade>> GetOportunidadesByClienteIdAsync(int clienteId)
         {
-            return await _oportunidadeRepository.GetByClienteIdAsync(clienteId);
+            return await _oportunidadeRepository.FindWithIncludesAsync(
+                o => o.ClienteId == clienteId,
+                o => o.Cliente,
+                o => o.Responsavel,
+                o => o.Produtos);
         }
 
         public async Task<IEnumerable<Oportunidade>> GetOportunidadesAbertasAsync()
         {
-            return await _oportunidadeRepository.GetOportunidadesAbertasAsync();
+            return await _oportunidadeRepository.FindWithIncludesAsync(
+                o => o.Fase == FaseOportunidade.Aberta || o.Fase == FaseOportunidade.Negociacao,
+                o => o.Cliente,
+                o => o.Responsavel,
+                o => o.Produtos);
         }
 
         // Operações de Produto
         public async Task<IEnumerable<Produto>> GetAllProdutosAsync()
         {
-            return await _produtoRepository.GetAllAsync();
+            return await _produtoRepository.GetAllWithIncludesAsync(
+                p => p.Variacoes,
+                p => p.Precos,
+                p => p.Bundles);
         }
 
         public async Task<Produto?> GetProdutoByIdAsync(int id)
         {
-            return await _produtoRepository.GetByIdAsync(id);
+            return await _produtoRepository.GetByIdWithIncludesAsync(id,
+                p => p.Variacoes,
+                p => p.Precos,
+                p => p.Bundles);
         }
 
         public async Task<Produto> CreateProdutoAsync(Produto produto)
         {
             produto.DataCadastro = DateTime.Now;
-            produto.UltimaAtualizacao = DateTime.Now;
+            produto.DataAtualizacao = DateTime.Now;
             return await _produtoRepository.AddAsync(produto);
         }
 
         public async Task<Produto> UpdateProdutoAsync(Produto produto)
         {
-            produto.UltimaAtualizacao = DateTime.Now;
+            produto.DataAtualizacao = DateTime.Now;
             return await _produtoRepository.UpdateAsync(produto);
         }
 
@@ -201,35 +250,11 @@ namespace CustomerSuccessCRM.Lib.Services.Implementations
 
         public async Task<IEnumerable<Produto>> GetProdutosAtivosAsync()
         {
-            return await _produtoRepository.GetAtivosAsync();
-        }
-
-        // Relatórios e Métricas
-        public async Task<CrmDashboard> GetDashboardDataAsync()
-        {
-            var dashboard = new CrmDashboard();
-
-            // Métricas básicas
-            dashboard.TotalClientes = await _clienteRepository.GetTotalClientesAsync();
-            dashboard.TotalProspectos = (await _clienteRepository.GetProspectosAsync()).Count();
-            dashboard.TotalClientesVip = (await _clienteRepository.GetClientesVipAsync()).Count();
-            dashboard.TotalInteracoes = (await _interacaoRepository.GetAllAsync()).Count();
-            dashboard.InteracoesPendentes = (await _interacaoRepository.GetInteracoesPendentesAsync()).Count();
-            dashboard.TotalOportunidades = await _oportunidadeRepository.GetTotalOportunidadesAsync();
-            dashboard.OportunidadesAbertas = (await _oportunidadeRepository.GetOportunidadesAbertasAsync()).Count();
-            dashboard.OportunidadesFechadas = (await _oportunidadeRepository.GetOportunidadesFechadasAsync()).Count();
-            dashboard.ValorTotalOportunidades = await _oportunidadeRepository.GetValorTotalOportunidadesAsync();
-            dashboard.ValorTotalOportunidadesFechadas = await _oportunidadeRepository.GetValorTotalOportunidadesFechadasAsync();
-            dashboard.TaxaConversao = await _oportunidadeRepository.GetTaxaConversaoAsync();
-            dashboard.TotalProdutos = await _produtoRepository.GetTotalProdutosAsync();
-            dashboard.ValorTotalProdutos = await _produtoRepository.GetValorTotalProdutosAsync();
-
-            // Dados recentes
-            dashboard.ClientesRecentes = (await _clienteRepository.GetAllAsync()).Take(5).ToList();
-            dashboard.InteracoesRecentes = (await _interacaoRepository.GetAllAsync()).Take(5).ToList();
-            dashboard.OportunidadesRecentes = (await _oportunidadeRepository.GetAllAsync()).Take(5).ToList();
-
-            return dashboard;
+            return await _produtoRepository.FindWithIncludesAsync(
+                p => p.Ativo,
+                p => p.Variacoes,
+                p => p.Precos,
+                p => p.Bundles);
         }
     }
 } 

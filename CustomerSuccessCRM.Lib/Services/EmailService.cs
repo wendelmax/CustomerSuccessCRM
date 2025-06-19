@@ -1,13 +1,13 @@
-using CustomerSuccessCRM.Lib.Services.Contracts;
-using Microsoft.Extensions.Options;
-using MimeKit;
+using CustomerSuccessCRM.Lib.Configuration;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.Extensions.Options;
+using MimeKit;
 using Scriban;
 
-namespace CustomerSuccessCRM.Lib.Services.Implementations
+namespace CustomerSuccessCRM.Lib.Services
 {
-    public class EmailService : IEmailService
+    public class EmailService
     {
         private readonly EmailSettings _settings;
 

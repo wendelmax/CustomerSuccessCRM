@@ -1,6 +1,6 @@
 using CustomerSuccessCRM.Lib.Models;
 
-namespace CustomerSuccessCRM.Lib.Services.Contracts
+namespace CustomerSuccessCRM.Lib.Services
 {
     public interface ICrmService
     {
@@ -38,8 +38,5 @@ namespace CustomerSuccessCRM.Lib.Services.Contracts
         Task<Produto> UpdateProdutoAsync(Produto produto);
         Task DeleteProdutoAsync(int id);
         Task<IEnumerable<Produto>> GetProdutosAtivosAsync();
-
-        // Relatórios e Métricas
-        Task<CrmDashboard> GetDashboardDataAsync();
     }
 } 

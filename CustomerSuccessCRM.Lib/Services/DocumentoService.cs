@@ -1,17 +1,17 @@
-using CustomerSuccessCRM.Lib.Models;
-using CustomerSuccessCRM.Lib.Services.Contracts;
+using System.Security.Cryptography;
+using System.Text;
+using CustomerSuccessCRM.Lib.Configuration;
 using CustomerSuccessCRM.Lib.Data;
-using Microsoft.EntityFrameworkCore;
-using MediatR;
+using CustomerSuccessCRM.Lib.Models;
 using CustomerSuccessCRM.Lib.Services.Events;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System.Security.Cryptography;
-using System.Text;
 
-namespace CustomerSuccessCRM.Lib.Services.Implementations
+namespace CustomerSuccessCRM.Lib.Services
 {
     public class DocumentoService : IDocumentoService
     {

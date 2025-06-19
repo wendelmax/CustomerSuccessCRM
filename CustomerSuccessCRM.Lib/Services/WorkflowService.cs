@@ -1,7 +1,7 @@
 using CustomerSuccessCRM.Lib.Models;
-using CustomerSuccessCRM.Lib.Services.Contracts;
 using CustomerSuccessCRM.Lib.Services.Strategies;
 using CustomerSuccessCRM.Lib.Configuration;
+using CustomerSuccessCRM.Lib.Repositories;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System;
@@ -17,6 +17,7 @@ namespace CustomerSuccessCRM.Lib.Services.Implementations
         private readonly INotificationService _notificationService;
         private readonly IEmailService _emailService;
         private readonly ICrmService _crmService;
+        private readonly IWorkflowRepository _repository;
         private readonly Dictionary<string, Func<WorkflowAcao, Task>> _acaoHandlers;
 
         public WorkflowService(
@@ -24,13 +25,15 @@ namespace CustomerSuccessCRM.Lib.Services.Implementations
             IOptions<WorkflowSettings> workflowSettings,
             INotificationService notificationService,
             IEmailService emailService,
-            ICrmService crmService)
+            ICrmService crmService,
+            IWorkflowRepository repository)
         {
             _businessRuleStrategy = businessRuleStrategy;
             _workflowSettings = workflowSettings.Value;
             _notificationService = notificationService;
             _emailService = emailService;
             _crmService = crmService;
+            _repository = repository;
 
             // Registrar handlers para cada tipo de ação
             _acaoHandlers = new Dictionary<string, Func<WorkflowAcao, Task>>
@@ -149,6 +152,117 @@ namespace CustomerSuccessCRM.Lib.Services.Implementations
                 parametros["responsavel"],
                 parametros["titulo"],
                 parametros["mensagem"]);
+        }
+
+        public async Task<IEnumerable<Workflow>> GetAllWorkflowsAsync()
+        {
+            return await _repository.GetWorkflowsWithRelationshipsAsync();
+        }
+
+        public async Task<Workflow?> GetWorkflowByIdAsync(int id)
+        {
+            return await _repository.GetWorkflowWithRelationshipsAsync(id);
+        }
+
+        public async Task<Workflow> CreateWorkflowAsync(Workflow workflow)
+        {
+            return await _repository.AddAsync(workflow);
+        }
+
+        public async Task<Workflow> UpdateWorkflowAsync(Workflow workflow)
+        {
+            return await _repository.UpdateAsync(workflow);
+        }
+
+        public async Task DeleteWorkflowAsync(int id)
+        {
+            await _repository.DeleteAsync(id);
+        }
+
+        public async Task<WorkflowExecucao> AgendarWorkflowAsync(int workflowId, DateTime dataExecucao, IDictionary<string, object> parametros)
+        {
+            var workflow = await GetWorkflowByIdAsync(workflowId);
+            if (workflow == null)
+                throw new InvalidOperationException("Workflow não encontrado");
+
+            var execucao = new WorkflowExecucao
+            {
+                WorkflowId = workflowId,
+                DataAgendada = dataExecucao,
+                Status = StatusExecucao.Agendado,
+                Parametros = System.Text.Json.JsonSerializer.Serialize(parametros)
+            };
+
+            await _repository.AddAsync(execucao);
+            return execucao;
+        }
+
+        public async Task CancelarExecucaoAsync(int execucaoId)
+        {
+            var execucao = await _repository.GetByIdAsync(execucaoId);
+            if (execucao != null)
+            {
+                execucao.Status = StatusExecucao.Cancelado;
+                await _repository.UpdateAsync(execucao);
+            }
+        }
+
+        public async Task<IEnumerable<WorkflowExecucao>> GetExecucoesWorkflowAsync(int workflowId)
+        {
+            return await _repository.GetWorkflowExecutionsAsync(workflowId);
+        }
+
+        public async Task<IEnumerable<WorkflowExecucao>> GetExecucoesEmAndamentoAsync()
+        {
+            return await _repository.GetActiveExecutionsAsync();
+        }
+
+        public async Task<IEnumerable<WorkflowExecucao>> GetExecucoesComErroAsync()
+        {
+            return await _repository.GetFailedExecutionsAsync();
+        }
+
+        public async Task<IDictionary<string, int>> GetEstatisticasExecucaoAsync(int workflowId)
+        {
+            return await _repository.GetExecutionStatisticsAsync(workflowId);
+        }
+
+        public async Task<TimeSpan> GetTempoMedioExecucaoAsync(int workflowId)
+        {
+            return await _repository.GetAverageExecutionTimeAsync(workflowId);
+        }
+
+        public async Task<IEnumerable<Workflow>> GetWorkflowsInativosAsync()
+        {
+            return await _repository.GetInactiveWorkflowsAsync();
+        }
+
+        public async Task NotificarErroExecucaoAsync(int workflowId)
+        {
+            var workflow = await GetWorkflowByIdAsync(workflowId);
+            if (workflow == null) return;
+
+            foreach (var admin in _workflowSettings.WorkflowAdministrators)
+            {
+                await _notificationService.EnviarNotificacaoAsync(
+                    admin,
+                    $"Erro em Workflow",
+                    $"O workflow {workflow.Nome} apresentou erro na execução.");
+            }
+        }
+
+        public async Task NotificarConclusaoAsync(int workflowId)
+        {
+            var workflow = await GetWorkflowByIdAsync(workflowId);
+            if (workflow == null) return;
+
+            foreach (var admin in _workflowSettings.WorkflowAdministrators)
+            {
+                await _notificationService.EnviarNotificacaoAsync(
+                    admin,
+                    $"Workflow Concluído",
+                    $"O workflow {workflow.Nome} foi concluído com sucesso.");
+            }
         }
     }
 } 

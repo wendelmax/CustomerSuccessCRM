@@ -1,8 +1,8 @@
-using CustomerSuccessCRM.Lib.Services.Contracts;
-using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
+using CustomerSuccessCRM.Lib.Configuration;
+using Microsoft.Extensions.Options;
 
-namespace CustomerSuccessCRM.Lib.Services.Implementations
+namespace CustomerSuccessCRM.Lib.Services
 {
     public class NotificationService : INotificationService
     {
