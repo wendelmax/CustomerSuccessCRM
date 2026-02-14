@@ -41,6 +41,7 @@ jobs:
       run: dotnet restore CustomerSuccessCRM.Desktop/CustomerSuccessCRM.Desktop.csproj
 
     - name: Build & Publish
+      shell: bash
       run: |
         dotnet publish CustomerSuccessCRM.Desktop/CustomerSuccessCRM.Desktop.csproj \
           -c Release \
