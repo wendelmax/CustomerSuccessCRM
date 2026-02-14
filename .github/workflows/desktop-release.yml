@@ -1,0 +1,84 @@
+name: Desktop Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        include:
+          - os: windows-latest
+            artifact_name: win-x64
+            runtime: win-x64
+            extension: .exe
+          - os: ubuntu-latest
+            artifact_name: linux-x64
+            runtime: linux-x64
+            extension: ""
+          - os: macos-latest
+            artifact_name: osx-x64
+            runtime: osx-x64
+            extension: .app
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore CustomerSuccessCRM.Desktop/CustomerSuccessCRM.Desktop.csproj
+
+    - name: Build & Publish
+      run: |
+        dotnet publish CustomerSuccessCRM.Desktop/CustomerSuccessCRM.Desktop.csproj \
+          -c Release \
+          -r ${{ matrix.runtime }} \
+          --self-contained true \
+          /p:PublishSingleFile=true \
+          /p:PublishReadyToRun=true \
+          -o ./publish/${{ matrix.artifact_name }}
+
+    - name: Package Artifact (Windows/Linux)
+      if: matrix.os != 'macos-latest'
+      shell: bash
+      run: |
+        cd ./publish/${{ matrix.artifact_name }}
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          zip -r ../../CustomerSuccessCRM-${{ matrix.artifact_name }}.zip .
+        else
+          tar -czvf ../../CustomerSuccessCRM-${{ matrix.artifact_name }}.tar.gz .
+        fi
+
+    - name: Package Artifact (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        cd ./publish/${{ matrix.artifact_name }}
+        tar -czvf ../../CustomerSuccessCRM-${{ matrix.artifact_name }}.tar.gz .
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: CustomerSuccessCRM-${{ matrix.artifact_name }}
+        path: |
+          *.zip
+          *.tar.gz
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          *.zip
+          *.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

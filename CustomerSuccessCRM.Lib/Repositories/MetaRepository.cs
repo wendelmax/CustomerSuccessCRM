@@ -15,7 +15,7 @@ namespace CustomerSuccessCRM.Lib.Repositories
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<Meta> BuscarPorIdAsync(int id)
+        public async Task<Meta?> BuscarPorIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }

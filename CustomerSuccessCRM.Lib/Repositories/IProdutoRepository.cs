@@ -5,7 +5,7 @@ namespace CustomerSuccessCRM.Lib.Repositories
     public interface IProdutoRepository : IBaseRepository<Produto>
     {
         Task<List<Produto>> BuscarTodosAsync();
-        Task<Produto> BuscarPorIdAsync(int id);
+        Task<Produto?> BuscarPorIdAsync(int id);
         Task<List<Produto>> BuscarPorCategoriaAsync(CategoriaProduto categoria);
         Task<List<Produto>> BuscarPorFaixaPrecoAsync(decimal precoMinimo, decimal precoMaximo);
         Task<List<Produto>> BuscarMaisVendidosAsync(int quantidade);
