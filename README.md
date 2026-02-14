@@ -34,36 +34,32 @@ O sistema passou por uma revitalização completa de interface, focada em uma es
 3. **CustomerSuccessCRM.Desktop**: Aplicação desktop com Avalonia UI e Compiled Bindings.
 4. **CustomerSuccessCRM.Tests**: Suíte de testes em xUnit para garantir a estabilidade.
 
-## ⚙️ Configuração do Ambiente
+## 🤖 CI/CD & Distribuição
 
-### Pré-requisitos
-- **.NET 10 SDK** (Obrigatório)
-- Visual Studio 2022 (v17.12+) ou VS Code com C# Dev Kit.
+O projeto utiliza **GitHub Actions** para automação completa de build e distribuição:
 
-### Instalação e Execução
+### 🐋 Web Docker (GHCR)
+Sempre que um push é feito na branch `main`, uma imagem Docker é construída e publicada no **GitHub Container Registry**.
+- **Imagem**: `ghcr.io/wendelmax/customersuccesscrm-web`
 
-1. **Clone e Restaure**:
-```bash
-git clone https://github.com/seu-usuario/CustomerSuccessCRM.git
-cd CustomerSuccessCRM
-dotnet restore
-```
-
-2. **Banco de Dados**:
-```bash
-cd CustomerSuccessCRM.Web
-dotnet ef database update
-```
-
-3. **Execução**:
-- **Web**: `dotnet run --project CustomerSuccessCRM.Web`
-- **Desktop**: `dotnet run --project CustomerSuccessCRM.Desktop`
+### 💻 Desktop Release (Multi-plataforma)
+Ao criar uma tag (ex: `v1.0.0`), o GitHub Actions gera builds otimizadas para:
+- **Windows** (.zip)
+- **Linux** (.tar.gz)
+- **macOS** (.tar.gz)
+Os binários ficam disponíveis na aba **Releases** do repositório.
 
 ## 🧪 Executando os Testes
 
 ```bash
 dotnet test
 ```
+
+## ⚙️ Configuração Local
+
+1. **Pré-requisitos**: .NET 10 SDK e VS 2022 (17.12+).
+2. **Executar**: `dotnet run --project CustomerSuccessCRM.Web` (Web) ou `dotnet run --project CustomerSuccessCRM.Desktop` (Desktop).
+3. **Banco**: O SQLite é inicializado automaticamente via migrações.
 
 ---
 
