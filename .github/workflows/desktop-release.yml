@@ -41,13 +41,14 @@ jobs:
       run: dotnet restore CustomerSuccessCRM.Desktop/CustomerSuccessCRM.Desktop.csproj
 
     - name: Build & Publish
+      shell: bash
       run: |
         dotnet publish CustomerSuccessCRM.Desktop/CustomerSuccessCRM.Desktop.csproj \
           -c Release \
           -r ${{ matrix.runtime }} \
           --self-contained true \
-          /p:PublishSingleFile=true \
-          /p:PublishReadyToRun=true \
+          -p:PublishSingleFile=true \
+          -p:PublishReadyToRun=true \
           -o ./publish/${{ matrix.artifact_name }}
 
     - name: Package Artifact (Windows/Linux)
