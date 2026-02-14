@@ -2,7 +2,7 @@ using CustomerSuccessCRM.Lib.Models;
 
 namespace CustomerSuccessCRM.Lib.Repositories
 {
-    public interface IClienteRepository : IBaseRepository
+    public interface IClienteRepository : IBaseRepository<Cliente>
     {
         Task<List<Cliente>> BuscarTodosAsync();
         Task<Cliente> BuscarPorIdAsync(int id);

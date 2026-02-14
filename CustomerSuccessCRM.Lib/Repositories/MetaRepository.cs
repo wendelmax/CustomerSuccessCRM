@@ -4,69 +4,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CustomerSuccessCRM.Lib.Repositories
 {
-    public class MetaRepository : BaseRepository, IMetaRepository
+    public class MetaRepository : BaseRepository<Meta>, IMetaRepository
     {
-        private readonly DbSet<Meta> _metas;
-
-        public MetaRepository(CrmDbContext context) : base(context, "Metas")
+        public MetaRepository(CrmDbContext context) : base(context)
         {
-            _metas = context.Set<Meta>();
-        }
-
-        public override async Task<bool> ExisteAsync(int id)
-        {
-            return await _metas.FindAsync(id) != null;
-        }
-
-        public override async Task<bool> AdicionarAsync(object entidade)
-        {
-            if (entidade is Meta meta)
-            {
-                await _metas.AddAsync(meta);
-                return await SaveChangesAsync();
-            }
-            return false;
-        }
-
-        public override async Task<bool> AtualizarAsync(object entidade)
-        {
-            if (entidade is Meta meta)
-            {
-                _metas.Update(meta);
-                return await SaveChangesAsync();
-            }
-            return false;
-        }
-
-        public override async Task<bool> DeletarAsync(int id)
-        {
-            var meta = await _metas.FindAsync(id);
-            if (meta == null) return false;
-
-            _metas.Remove(meta);
-            return await SaveChangesAsync();
         }
 
         public async Task<List<Meta>> BuscarTodasAsync()
         {
-            return await _metas.ToListAsync();
+            return await _dbSet.ToListAsync();
         }
 
         public async Task<Meta> BuscarPorIdAsync(int id)
         {
-            return await _metas.FindAsync(id);
+            return await _dbSet.FindAsync(id);
         }
 
         public async Task<List<Meta>> BuscarPorResponsavelAsync(string responsavelId)
         {
-            return await _metas
+            return await _dbSet
                 .Where(m => m.ResponsavelId == responsavelId)
                 .ToListAsync();
         }
 
         public async Task<List<Meta>> BuscarPorEquipeAsync(string equipeId)
         {
-            return await _metas
+            return await _dbSet
                 .Where(m => m.EquipeId == equipeId)
                 .ToListAsync();
         }
@@ -74,14 +37,14 @@ namespace CustomerSuccessCRM.Lib.Repositories
         public async Task<List<Meta>> BuscarAtrasadasAsync()
         {
             var hoje = DateTime.Today;
-            return await _metas
+            return await _dbSet
                 .Where(m => m.Status == StatusMeta.EmAndamento && m.DataFim < hoje)
                 .ToListAsync();
         }
 
         public async Task<decimal> CalcularPercentualAtingimentoAsync(string? equipeId = null)
         {
-            var query = _metas.AsQueryable();
+            var query = _dbSet.AsQueryable();
             if (!string.IsNullOrEmpty(equipeId))
             {
                 query = query.Where(m => m.EquipeId == equipeId);
@@ -98,7 +61,7 @@ namespace CustomerSuccessCRM.Lib.Repositories
 
         public async Task<List<Meta>> BuscarPorPeriodoAsync(DateTime inicio, DateTime fim)
         {
-            return await _metas
+            return await _dbSet
                 .Where(m => m.DataInicio >= inicio && m.DataFim <= fim)
                 .ToListAsync();
         }
@@ -106,14 +69,14 @@ namespace CustomerSuccessCRM.Lib.Repositories
         public async Task<List<Meta>> BuscarProximasVencerAsync(int dias)
         {
             var dataLimite = DateTime.Today.AddDays(dias);
-            return await _metas
+            return await _dbSet
                 .Where(m => m.Status == StatusMeta.EmAndamento && m.DataFim <= dataLimite)
                 .ToListAsync();
         }
 
         public async Task<Dictionary<string, decimal>> CalcularAtingimentoPorEquipeAsync()
         {
-            var metas = await _metas.ToListAsync();
+            var metas = await _dbSet.ToListAsync();
 
             return metas.GroupBy(m => m.EquipeId ?? "Sem Equipe")
                 .ToDictionary(

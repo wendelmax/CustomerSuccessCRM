@@ -7,53 +7,53 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span class="icon-box"></span>
-                    Lista de Produtos
-                </h3>
+            <div class="card-header d-flex justify-content-between align-items-center py-3">
+                <div class="d-flex align-items-center">
+                    <span class="material-symbols-rounded mr-2 text-primary">inventory_2</span>
+                    <h3 class="card-title">Catálogo de Produtos</h3>
+                </div>
                 <div class="card-tools">
-                    <a asp-action="Create" class="btn btn-primary btn-sm">
-                        <span class="icon-box"></span> Novo Produto
+                    <a asp-action="Create" class="btn btn-primary d-flex align-items-center">
+                        <span class="material-symbols-rounded mr-1" style="font-size: 20px;">add_box</span> 
+                        Novo Produto
                     </a>
                 </div>
             </div>
             <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
+                <div class="row mb-4 align-items-end">
+                    <div class="col-md-5">
+                        <label class="small font-weight-bold text-muted text-uppercase mb-2">Filtrar produtos</label>
                         <div class="input-group">
-                            <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome...">
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-default">
-                                    <span class="icon-search"></span>
-                                </button>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-transparent border-right-0">
+                                    <span class="material-symbols-rounded text-muted" style="font-size: 20px;">search</span>
+                                </span>
                             </div>
+                            <input type="text" id="searchInput" class="form-control border-left-0 pl-0" placeholder="Nome ou descrição do produto...">
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="float-right">
-                            <select id="categoriaFilter" class="form-control form-control-sm">
-                                <option value="">Todas as Categorias</option>
-                                <option value="Hardware">Hardware</option>
-                                <option value="Software">Software</option>
-                                <option value="Servico">Serviço</option>
-                                <option value="Treinamento">Treinamento</option>
-                            </select>
-                        </div>
+                    <div class="col-md-3">
+                        <label class="small font-weight-bold text-muted text-uppercase mb-2">Categoria</label>
+                        <select id="categoriaFilter" class="form-control">
+                            <option value="">Todas as Categorias</option>
+                            <option value="Hardware">Hardware</option>
+                            <option value="Software">Software</option>
+                            <option value="Servico">Serviço</option>
+                            <option value="Treinamento">Treinamento</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="table-responsive">
-                    <table id="produtosTable" class="table table-bordered table-striped">
+                    <table id="produtosTable" class="table table-hover border-0 shadow-none">
                         <thead>
                             <tr>
-                                <th>Nome</th>
-                                <th>Descrição</th>
-                                <th>Preço Base</th>
-                                <th>Categoria</th>
-                                <th>Estoque</th>
-                                <th>Status</th>
-                                <th>Ações</th>
+                                <th class="border-top-0">Produto</th>
+                                <th class="border-top-0">Categoria</th>
+                                <th class="border-top-0">Preço</th>
+                                <th class="border-top-0">Estoque</th>
+                                <th class="border-top-0">Status</th>
+                                <th class="border-top-0 text-right">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,10 +61,9 @@
                             {
                                 <tr>
                                     <td>
-                                        <strong>@item.Nome</strong>
+                                        <div class="font-weight-600 text-dark">@item.Nome</div>
+                                        <div class="small text-muted text-truncate" style="max-width: 250px;">@item.Descricao</div>
                                     </td>
-                                    <td>@item.Descricao</td>
-                                    <td>R$ @item.PrecoBase.ToString("N2")</td>
                                     <td>
                                         @{
                                             var categoriaClass = item.Categoria switch
@@ -76,38 +75,47 @@
                                                 _ => "badge-secondary"
                                             };
                                         }
-                                        <span class="badge @categoriaClass">@item.Categoria</span>
+                                        <span class="badge @categoriaClass px-3 py-2" style="border-radius: 6px;">@item.Categoria</span>
+                                    </td>
+                                    <td>
+                                        <div class="font-weight-600 text-dark">R$ @item.PrecoBase.ToString("N2")</div>
                                     </td>
                                     <td>
                                         @if (item.QuantidadeEstoque <= 5)
                                         {
-                                            <span class="text-danger font-weight-bold">@item.QuantidadeEstoque</span>
+                                            <span class="badge badge-danger-soft text-danger px-2 py-1">
+                                                <span class="material-symbols-rounded align-bottom" style="font-size: 14px;">warning</span> @item.QuantidadeEstoque
+                                            </span>
                                         }
                                         else
                                         {
-                                            @item.QuantidadeEstoque
+                                            <span class="text-dark font-weight-500">@item.QuantidadeEstoque un.</span>
                                         }
                                     </td>
                                     <td>
                                         @if (item.Ativo)
                                         {
-                                            <span class="badge badge-success">Ativo</span>
+                                            <span class="text-success small font-weight-bold d-flex align-items-center">
+                                                <span class="material-symbols-rounded mr-1" style="font-size: 16px;">check_circle</span> Ativo
+                                            </span>
                                         }
                                         else
                                         {
-                                            <span class="badge badge-danger">Inativo</span>
+                                            <span class="text-danger small font-weight-bold d-flex align-items-center">
+                                                <span class="material-symbols-rounded mr-1" style="font-size: 16px;">cancel</span> Inativo
+                                            </span>
                                         }
                                     </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Editar">
-                                                <span class="icon-edit"></span>
+                                    <td class="text-right">
+                                        <div class="btn-group shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-white btn-sm px-3" title="Editar">
+                                                <span class="material-symbols-rounded text-primary" style="font-size: 18px;">edit</span>
                                             </a>
-                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary" title="Detalhes">
-                                                <span class="icon-eye"></span>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-white btn-sm px-3" title="Detalhes">
+                                                <span class="material-symbols-rounded text-info" style="font-size: 18px;">visibility</span>
                                             </a>
-                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" title="Excluir">
-                                                <span class="icon-trash"></span>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-white btn-sm px-3" title="Excluir">
+                                                <span class="material-symbols-rounded text-danger" style="font-size: 18px;">delete</span>
                                             </a>
                                         </div>
                                     </td>
@@ -119,12 +127,15 @@
 
                 @if (!Model.Any())
                 {
-                    <div class="text-center py-4">
-                        <span class="icon-box" style="font-size: 3rem; color: #ccc;"></span>
-                        <h5 class="text-muted">Nenhum produto encontrado</h5>
-                        <p class="text-muted">Comece adicionando seu primeiro produto.</p>
-                        <a asp-action="Create" class="btn btn-primary">
-                            <span class="icon-box"></span> Adicionar Produto
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <span class="material-symbols-rounded text-muted" style="font-size: 4rem; opacity: 0.3;">inventory</span>
+                        </div>
+                        <h5 class="text-dark font-weight-bold">Catálogo vazio</h5>
+                        <p class="text-muted mb-4">Não há produtos cadastrados.</p>
+                        <a asp-action="Create" class="btn btn-primary px-4">
+                            <span class="material-symbols-rounded mr-1" style="font-size: 20px;">add_box</span> 
+                            Adicionar Produto
                         </a>
                     </div>
                 }
@@ -139,32 +150,52 @@
             var table = $('#produtosTable').DataTable({
                 "responsive": true,
                 "autoWidth": false,
+                "dom": '<"top"i>rt<"bottom"lp><"clear">',
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
                 },
                 "order": [[0, "asc"]],
                 "columnDefs": [
-                    { "orderable": false, "targets": 6 }
+                    { "orderable": false, "targets": 5 }
                 ]
             });
 
-            // Filtro de busca personalizado
             $('#searchInput').on('keyup', function () {
                 table.search(this.value).draw();
             });
 
-            // Filtro de categoria personalizado
             $('#categoriaFilter').on('change', function () {
                 var categoria = $(this).val();
-                table.column(3).search(categoria).draw();
+                table.column(1).search(categoria).draw();
             });
         });
     </script>
 }
 
 <style>
-    .icon-search::before { content: "🔍"; }
-    .icon-edit::before { content: "✏️"; }
-    .icon-eye::before { content: "👁️"; }
-    .icon-trash::before { content: "🗑️"; }
-</style> 
+    .btn-white {
+        background: #fff;
+        border: 1px solid #f1f5f9;
+    }
+    .btn-white:hover {
+        background: #f8fafc;
+    }
+    .badge-danger-soft {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+    table.dataTable thead th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 1.25rem 1rem;
+    }
+    .table td {
+        vertical-align: middle;
+        padding: 1.25rem 1rem;
+        border-top: 1px solid #f1f5f9;
+    }
+</style>
+ 

@@ -1,11 +1,11 @@
 namespace CustomerSuccessCRM.Lib.Repositories
 {
-    public interface IBaseRepository
+    public interface IBaseRepository<T> where T : class
     {
         Task<bool> SaveChangesAsync();
         Task<bool> ExisteAsync(int id);
-        Task<bool> AdicionarAsync(object entidade);
-        Task<bool> AtualizarAsync(object entidade);
+        Task<bool> AdicionarAsync(T entidade);
+        Task<bool> AtualizarAsync(T entidade);
         Task<bool> DeletarAsync(int id);
     }
 } 

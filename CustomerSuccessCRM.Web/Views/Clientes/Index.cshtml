@@ -7,52 +7,52 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span class="icon-users"></span>
-                    Lista de Clientes
-                </h3>
+            <div class="card-header d-flex justify-content-between align-items-center py-3">
+                <div class="d-flex align-items-center">
+                    <span class="material-symbols-rounded mr-2 text-primary">group</span>
+                    <h3 class="card-title">Base de Clientes</h3>
+                </div>
                 <div class="card-tools">
-                    <a asp-action="Create" class="btn btn-primary btn-sm">
-                        <span class="icon-plus"></span> Novo Cliente
+                    <a asp-action="Create" class="btn btn-primary d-flex align-items-center">
+                        <span class="material-symbols-rounded mr-1" style="font-size: 20px;">person_add</span> 
+                        Novo Cliente
                     </a>
                 </div>
             </div>
             <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
+                <div class="row mb-4 align-items-end">
+                    <div class="col-md-5">
+                        <label class="small font-weight-bold text-muted text-uppercase mb-2">Busca inteligente</label>
                         <div class="input-group">
-                            <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome ou empresa...">
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-default">
-                                    <span class="icon-search"></span>
-                                </button>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-transparent border-right-0">
+                                    <span class="material-symbols-rounded text-muted" style="font-size: 20px;">search</span>
+                                </span>
                             </div>
+                            <input type="text" id="searchInput" class="form-control border-left-0 pl-0" placeholder="Filtrar por nome, empresa ou e-mail...">
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="float-right">
-                            <select id="statusFilter" class="form-control form-control-sm">
-                                <option value="">Todos os Status</option>
-                                <option value="Ativo">Ativo</option>
-                                <option value="Inativo">Inativo</option>
-                                <option value="Prospecto">Prospecto</option>
-                                <option value="Cancelado">Cancelado</option>
-                            </select>
-                        </div>
+                    <div class="col-md-3">
+                        <label class="small font-weight-bold text-muted text-uppercase mb-2">Status</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">Todos os Status</option>
+                            <option value="Ativo">Ativo</option>
+                            <option value="Inativo">Inativo</option>
+                            <option value="Prospecto">Prospecto</option>
+                            <option value="Cancelado">Cancelado</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="table-responsive">
-                    <table id="clientesTable" class="table table-bordered table-striped">
+                    <table id="clientesTable" class="table table-hover border-0 shadow-none">
                         <thead>
                             <tr>
-                                <th>Nome</th>
-                                <th>Empresa</th>
-                                <th>Email</th>
-                                <th>Telefone</th>
-                                <th>Status</th>
-                                <th>Ações</th>
+                                <th class="border-top-0">Cliente</th>
+                                <th class="border-top-0">Empresa</th>
+                                <th class="border-top-0">Contato</th>
+                                <th class="border-top-0">Status</th>
+                                <th class="border-top-0 text-right">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,39 +60,39 @@
                             {
                                 <tr>
                                     <td>
-                                        <strong>@item.Nome</strong>
+                                        <div class="font-weight-600 text-dark">@item.Nome</div>
                                     </td>
-                                    <td>@item.Empresa</td>
+                                    <td class="text-muted">@item.Empresa</td>
                                     <td>
+                                        <div class="small text-muted">@item.Telefone</div>
                                         @if (!string.IsNullOrEmpty(item.Email))
                                         {
-                                            <a href="mailto:@item.Email">@item.Email</a>
+                                            <a href="mailto:@item.Email" class="small text-primary font-weight-500">@item.Email</a>
                                         }
                                     </td>
-                                    <td>@item.Telefone</td>
                                     <td>
                                         @{
                                             var badgeClass = item.Status switch
                                             {
                                                 StatusCliente.Ativo => "badge-success",
-                                                StatusCliente.Inativo => "badge-danger",
-                                                StatusCliente.Prospecto => "badge-warning",
-                                                StatusCliente.Cancelado => "badge-secondary",
+                                                StatusCliente.Inativo => "badge-warning",
+                                                StatusCliente.Prospecto => "badge-info",
+                                                StatusCliente.Cancelado => "badge-danger",
                                                 _ => "badge-secondary"
                                             };
                                         }
-                                        <span class="badge @badgeClass">@item.Status</span>
+                                        <span class="badge @badgeClass px-3 py-2" style="border-radius: 6px;">@item.Status</span>
                                     </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Editar">
-                                                <span class="icon-edit"></span>
+                                    <td class="text-right">
+                                        <div class="btn-group shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-white btn-sm px-3" title="Editar">
+                                                <span class="material-symbols-rounded text-primary" style="font-size: 18px;">edit</span>
                                             </a>
-                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary" title="Detalhes">
-                                                <span class="icon-eye"></span>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-white btn-sm px-3" title="Detalhes">
+                                                <span class="material-symbols-rounded text-info" style="font-size: 18px;">visibility</span>
                                             </a>
-                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" title="Excluir">
-                                                <span class="icon-trash"></span>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-white btn-sm px-3" title="Excluir">
+                                                <span class="material-symbols-rounded text-danger" style="font-size: 18px;">delete</span>
                                             </a>
                                         </div>
                                     </td>
@@ -104,12 +104,15 @@
 
                 @if (!Model.Any())
                 {
-                    <div class="text-center py-4">
-                        <span class="icon-users" style="font-size: 3rem; color: #ccc;"></span>
-                        <h5 class="text-muted">Nenhum cliente encontrado</h5>
-                        <p class="text-muted">Comece adicionando seu primeiro cliente.</p>
-                        <a asp-action="Create" class="btn btn-primary">
-                            <span class="icon-plus"></span> Adicionar Cliente
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <span class="material-symbols-rounded text-muted" style="font-size: 4rem; opacity: 0.3;">group_off</span>
+                        </div>
+                        <h5 class="text-dark font-weight-bold">Nenhum cliente disponível</h5>
+                        <p class="text-muted mb-4">A sua lista de clientes está vazia.</p>
+                        <a asp-action="Create" class="btn btn-primary px-4">
+                            <span class="material-symbols-rounded mr-1" style="font-size: 20px;">person_add</span> 
+                            Adicionar Cliente
                         </a>
                     </div>
                 }
@@ -124,12 +127,13 @@
             var table = $('#clientesTable').DataTable({
                 "responsive": true,
                 "autoWidth": false,
+                "dom": '<"top"i>rt<"bottom"lp><"clear">', // Remove default search
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
                 },
                 "order": [[0, "asc"]],
                 "columnDefs": [
-                    { "orderable": false, "targets": 5 }
+                    { "orderable": false, "targets": 4 }
                 ]
             });
 
@@ -141,18 +145,33 @@
             // Filtro de status personalizado
             $('#statusFilter').on('change', function () {
                 var status = $(this).val();
-                table.column(4).search(status).draw();
+                table.column(3).search(status).draw();
             });
         });
     </script>
 }
 
 <style>
-    .icon-users::before { content: "👥"; }
-    .icon-plus::before { content: "➕"; }
-    .icon-search::before { content: "🔍"; }
-    .icon-sort::before { content: "↕️"; }
-    .icon-edit::before { content: "✏️"; }
-    .icon-eye::before { content: "👁️"; }
-    .icon-trash::before { content: "🗑️"; }
-</style> 
+    .btn-white {
+        background: #fff;
+        border: 1px solid #f1f5f9;
+    }
+    .btn-white:hover {
+        background: #f8fafc;
+    }
+    table.dataTable thead th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 1.25rem 1rem;
+    }
+    .table td {
+        vertical-align: middle;
+        padding: 1.25rem 1rem;
+        border-top: 1px solid #f1f5f9;
+    }
+</style>
+ 

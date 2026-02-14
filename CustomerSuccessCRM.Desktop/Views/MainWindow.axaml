@@ -17,72 +17,72 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="260" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <!-- Menu Lateral -->
-        <Border Grid.Column="0" Background="#343a40">
+        <Border Grid.Column="0" Background="{StaticResource SidebarBg}">
             <DockPanel>
                 <!-- Logo -->
-                <Border DockPanel.Dock="Top" Height="60" Background="#2c3136" Padding="10">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Border Width="35" Height="35" Background="#007bff" CornerRadius="8">
-                            <TextBlock Text="C" Foreground="White" FontWeight="Bold" FontSize="20"
+                <Border DockPanel.Dock="Top" Height="80" Padding="20">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Border Width="36" Height="36" Background="{StaticResource PrimaryColor}" CornerRadius="8">
+                            <TextBlock Text="C" Foreground="White" FontWeight="Bold" FontSize="22"
                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <TextBlock Text="Customer Success CRM" Foreground="#cccccc" 
-                                 VerticalAlignment="Center" FontSize="16"/>
+                        <TextBlock Text="Customer CRM" Foreground="White" FontWeight="SemiBold"
+                                 VerticalAlignment="Center" FontSize="18"/>
                     </StackPanel>
                 </Border>
 
                 <!-- Menu Items -->
-                <StackPanel Spacing="5" Margin="0,20,0,0">
+                <StackPanel Spacing="4" Margin="0,10,0,0">
                     <Button Classes="menuItem" Command="{Binding ShowDashboardCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="📊" FontSize="16"/>
-                            <TextBlock Text="Dashboard" Foreground="#cccccc"/>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <PathIcon Data="{StaticResource icon_dashboard}" Width="18" Height="18" Foreground="#94a3b8"/>
+                            <TextBlock Text="Dashboard" Foreground="#f8fafc" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
                     <Button Classes="menuItem" Command="{Binding ShowClientesCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="👥" FontSize="16"/>
-                            <TextBlock Text="Clientes" Foreground="#cccccc"/>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <PathIcon Data="{StaticResource icon_users}" Width="18" Height="18" Foreground="#94a3b8"/>
+                            <TextBlock Text="Clientes" Foreground="#f8fafc" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
                     <Button Classes="menuItem" Command="{Binding ShowProdutosCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="📦" FontSize="16"/>
-                            <TextBlock Text="Produtos" Foreground="#cccccc"/>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <PathIcon Data="{StaticResource icon_box}" Width="18" Height="18" Foreground="#94a3b8"/>
+                            <TextBlock Text="Produtos" Foreground="#f8fafc" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
                     <Button Classes="menuItem" Command="{Binding ShowMetasCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="🎯" FontSize="16"/>
-                            <TextBlock Text="Metas" Foreground="#cccccc"/>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <PathIcon Data="{StaticResource icon_target}" Width="18" Height="18" Foreground="#94a3b8"/>
+                            <TextBlock Text="Metas" Foreground="#f8fafc" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
-                    <TextBlock Text="RELATÓRIOS" Foreground="#6c757d" Margin="15,20,15,10"
-                             FontSize="12"/>
+                    <TextBlock Text="RELATÓRIOS" Foreground="#4b5563" Margin="20,24,20,8"
+                             FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
 
                     <Button Classes="menuItem">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="📈" FontSize="16"/>
-                            <TextBlock Text="Relatórios" Foreground="#cccccc"/>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <PathIcon Data="{StaticResource icon_chart}" Width="18" Height="18" Foreground="#4b5563"/>
+                            <TextBlock Text="Performance" Foreground="#94a3b8" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
-                    <TextBlock Text="CONFIGURAÇÕES" Foreground="#6c757d" Margin="15,20,15,10"
-                             FontSize="12"/>
+                    <TextBlock Text="SISTEMA" Foreground="#4b5563" Margin="20,24,20,8"
+                             FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
 
                     <Button Classes="menuItem">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="⚙️" FontSize="16"/>
-                            <TextBlock Text="Configurações" Foreground="#cccccc"/>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <PathIcon Data="{StaticResource icon_settings}" Width="18" Height="18" Foreground="#4b5563"/>
+                            <TextBlock Text="Configurações" Foreground="#94a3b8" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -90,18 +90,18 @@
         </Border>
 
         <!-- Conteúdo Principal -->
-        <Grid Grid.Column="1" Background="#f4f6f9">
+        <Grid Grid.Column="1" Background="#f8fafc">
             <!-- Header -->
-            <Border Height="60" VerticalAlignment="Top" Background="White"
-                    BorderBrush="#dee2e6" BorderThickness="0,0,0,1">
-                <Grid Margin="20,0">
-                    <TextBlock Text="{Binding CurrentPage}" FontSize="20"
-                             VerticalAlignment="Center"/>
+            <Border Height="80" VerticalAlignment="Top" Background="White"
+                   BorderBrush="#f1f5f9" BorderThickness="0,0,0,1">
+                <Grid Margin="32,0">
+                    <TextBlock Text="{Binding CurrentPage}" FontSize="24" FontWeight="Bold"
+                             Foreground="#1e293b" VerticalAlignment="Center"/>
                 </Grid>
             </Border>
 
             <!-- Content Area -->
-            <ContentControl Margin="20,80,20,20" Content="{Binding CurrentView}"/>
+            <ContentControl Margin="32,100,32,32" Content="{Binding CurrentView}"/>
         </Grid>
     </Grid>
 
@@ -109,16 +109,21 @@
         <Style Selector="Button.menuItem">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="15,10"/>
-            <Setter Property="Width" Value="250"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="CornerRadius" Value="0"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
         </Style>
-        <Style Selector="Button.menuItem:pointerover">
-            <Setter Property="Background" Value="#2c3136"/>
+        <Style Selector="Button.menuItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource SidebarHover}"/>
         </Style>
-        <Style Selector="Button.menuItem:pressed">
-            <Setter Property="Background" Value="#23272b"/>
+        <Style Selector="Button.menuItem:pointerover PathIcon">
+            <Setter Property="Foreground" Value="White"/>
         </Style>
     </Window.Styles>
 

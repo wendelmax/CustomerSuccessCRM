@@ -9,123 +9,130 @@
 
     <Grid>
         <ScrollViewer>
-            <StackPanel Margin="20">
-                <TextBlock Text="Visão geral do seu Customer Success CRM"
-                           Classes="h2"
-                           Margin="0,0,0,20"/>
+            <StackPanel Margin="32">
+                <TextBlock Text="Visão Geral do sistema"
+                           Classes="h1"
+                           Margin="0,0,0,32"/>
 
                 <!-- Cards de Estatísticas -->
                 <WrapPanel>
                     <!-- Card Total Clientes -->
-                    <Border Classes="card" Margin="0,0,20,20" Width="250">
-                        <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
-                            <StackPanel Grid.Row="0" Grid.Column="0">
-                                <TextBlock Text="Total Clientes" Classes="h3"/>
-                                <TextBlock Text="{Binding TotalClientes}" Classes="h1" Foreground="#007BFF"/>
+                    <Border Classes="card" Margin="0,0,24,24" Width="260">
+                        <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="Clientes" Classes="h3" Margin="0,0,0,4"/>
+                                <TextBlock Text="{Binding TotalClientes}" Classes="h1"/>
                             </StackPanel>
-                            <PathIcon Grid.Row="0" Grid.Column="1" 
-                                     Data="{StaticResource people_regular}"
-                                     Width="32" Height="32"
-                                     Foreground="#007BFF"/>
+                            <Border Grid.Column="1" Width="48" Height="48" Background="#e0e7ff" CornerRadius="12">
+                                <PathIcon Data="{StaticResource icon_users}" 
+                                         Width="22" Height="22"
+                                         Foreground="{StaticResource PrimaryColor}"/>
+                            </Border>
                         </Grid>
                     </Border>
 
                     <!-- Card Total Produtos -->
-                    <Border Classes="card" Margin="0,0,20,20" Width="250">
-                        <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
-                            <StackPanel Grid.Row="0" Grid.Column="0">
-                                <TextBlock Text="Total Produtos" Classes="h3"/>
-                                <TextBlock Text="{Binding TotalProdutos}" Classes="h1" Foreground="#28A745"/>
+                    <Border Classes="card" Margin="0,0,24,24" Width="260">
+                        <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="Produtos" Classes="h3" Margin="0,0,0,4"/>
+                                <TextBlock Text="{Binding TotalProdutos}" Classes="h1"/>
                             </StackPanel>
-                            <PathIcon Grid.Row="0" Grid.Column="1" 
-                                     Data="{StaticResource box_regular}"
-                                     Width="32" Height="32"
-                                     Foreground="#28A745"/>
+                            <Border Grid.Column="1" Width="48" Height="48" Background="#dcfce7" CornerRadius="12">
+                                <PathIcon Data="{StaticResource icon_box}" 
+                                         Width="22" Height="22"
+                                         Foreground="#16a34a"/>
+                            </Border>
                         </Grid>
                     </Border>
 
                     <!-- Card Total Metas -->
-                    <Border Classes="card" Margin="0,0,20,20" Width="250">
-                        <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
-                            <StackPanel Grid.Row="0" Grid.Column="0">
-                                <TextBlock Text="Total Metas" Classes="h3"/>
-                                <TextBlock Text="{Binding TotalMetas}" Classes="h1" Foreground="#FFC107"/>
+                    <Border Classes="card" Margin="0,0,24,24" Width="260">
+                        <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="Metas Ativas" Classes="h3" Margin="0,0,0,4"/>
+                                <TextBlock Text="{Binding TotalMetas}" Classes="h1"/>
                             </StackPanel>
-                            <PathIcon Grid.Row="0" Grid.Column="1" 
-                                     Data="{StaticResource target_regular}"
-                                     Width="32" Height="32"
-                                     Foreground="#FFC107"/>
+                            <Border Grid.Column="1" Width="48" Height="48" Background="#fffbeb" CornerRadius="12">
+                                <PathIcon Data="{StaticResource icon_target}" 
+                                         Width="22" Height="22"
+                                         Foreground="#d97706"/>
+                            </Border>
                         </Grid>
                     </Border>
 
                     <!-- Card Conclusão -->
-                    <Border Classes="card" Margin="0,0,20,20" Width="250">
-                        <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
-                            <StackPanel Grid.Row="0" Grid.Column="0">
-                                <TextBlock Text="Conclusão" Classes="h3"/>
+                    <Border Classes="card" Margin="0,0,24,24" Width="260">
+                        <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="Conclusão" Classes="h3" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding PercentualConclusao, StringFormat='{}{0}%'}" 
-                                         Classes="h1" Foreground="#17A2B8"/>
+                                         Classes="h1"/>
                             </StackPanel>
-                            <PathIcon Grid.Row="0" Grid.Column="1" 
-                                     Data="{StaticResource chart_regular}"
-                                     Width="32" Height="32"
-                                     Foreground="#17A2B8"/>
+                            <Border Grid.Column="1" Width="48" Height="48" Background="#f0fdf4" CornerRadius="12">
+                                <PathIcon Data="{StaticResource icon_chart}" 
+                                         Width="22" Height="22"
+                                         Foreground="#15803d"/>
+                            </Border>
                         </Grid>
                     </Border>
                 </WrapPanel>
 
-                <!-- Gráfico de Metas -->
-                <Border Classes="card" Margin="0,0,0,20">
-                    <Grid RowDefinitions="Auto,*">
-                        <TextBlock Text="Progresso das Metas" Classes="h3" Margin="0,0,0,10"/>
-                        <ItemsControl Grid.Row="1" ItemsSource="{Binding Metas}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="0,0,0,10">
-                                        <Grid ColumnDefinitions="*,Auto">
-                                            <TextBlock Text="{Binding Descricao}" Classes="body1"/>
-                                            <TextBlock Grid.Column="1" 
-                                                     Text="{Binding PercentualConclusao, StringFormat='{}{0}%'}"
-                                                     Classes="body1"/>
-                                        </Grid>
-                                        <ProgressBar Value="{Binding PercentualConclusao}" 
-                                                   Maximum="100" 
-                                                   Height="10"
-                                                   Margin="0,5,0,0"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </Grid>
-                </Border>
+                <Grid ColumnDefinitions="*,400" Margin="0,8,0,0">
+                    <!-- Lista de Clientes Recentes -->
+                    <Border Grid.Column="0" Classes="card" Margin="0,0,24,0">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Top" Text="Clientes Recentes" Classes="h2" Margin="0,0,0,24"/>
+                            <DataGrid ItemsSource="{Binding ClientesRecentes}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      CanUserResizeColumns="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="NOME" Binding="{Binding Nome}" Width="1.5*"/>
+                                    <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="2*"/>
+                                    <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DockPanel>
+                    </Border>
 
-                <!-- Lista de Clientes Recentes -->
-                <Border Classes="card">
-                    <Grid RowDefinitions="Auto,*">
-                        <TextBlock Text="Clientes Recentes" Classes="h3" Margin="0,0,0,10"/>
-                        <DataGrid Grid.Row="1" 
-                                  ItemsSource="{Binding ClientesRecentes}"
-                                  AutoGenerateColumns="False"
-                                  IsReadOnly="True"
-                                  GridLinesVisibility="All">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Nome" Binding="{Binding Nome}" Width="*"/>
-                                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
-                                <DataGridTextColumn Header="Telefone" Binding="{Binding Telefone}" Width="*"/>
-                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Grid>
-                </Border>
+                    <!-- Progresso das Metas -->
+                    <Border Grid.Column="1" Classes="card">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Top" Text="Progresso" Classes="h2" Margin="0,0,0,24"/>
+                            <ScrollViewer>
+                                <ItemsControl ItemsSource="{Binding Metas}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Margin="0,0,0,20">
+                                                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                                                    <TextBlock Text="{Binding Descricao}" FontWeight="Medium" Foreground="#1e293b"/>
+                                                    <TextBlock Grid.Column="1" 
+                                                             Text="{Binding PercentualConclusao, StringFormat='{}{0}%'}"
+                                                             FontWeight="Bold" Foreground="{StaticResource PrimaryColor}"/>
+                                                </Grid>
+                                                <ProgressBar Value="{Binding PercentualConclusao}" 
+                                                           Maximum="100"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </DockPanel>
+                    </Border>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
 
         <!-- Loading Overlay -->
-        <Border Background="#80000000" IsVisible="{Binding IsLoading}" 
-                HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="Carregando..." Foreground="White" FontSize="16"/>
-            </StackPanel>
+        <Border Background="#40111827" IsVisible="{Binding IsLoading}">
+            <Border Background="White" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Padding="32" CornerRadius="16" BoxShadow="0 10 30 0 #40000000">
+                <StackPanel Spacing="16">
+                    <ProgressBar IsIndeterminate="True" Width="120"/>
+                    <TextBlock Text="Sincronizando dados..." HorizontalAlignment="Center" FontWeight="Medium"/>
+                </StackPanel>
+            </Border>
         </Border>
     </Grid>
 

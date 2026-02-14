@@ -3,73 +3,87 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:CustomerSuccessCRM.Desktop.ViewModels.Clientes"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
              x:Class="CustomerSuccessCRM.Desktop.Views.Clientes.ClientesView"
              x:DataType="vm:ClientesViewModel">
 
-    <Grid>
-        <StackPanel Spacing="20">
-            <!-- Header -->
-            <Border Background="White" CornerRadius="8" Padding="20">
-                <Grid ColumnDefinitions="*,Auto">
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="Clientes" FontSize="24" FontWeight="Bold" Margin="0,0,0,5"/>
-                        <TextBlock Text="Gerencie seus clientes" Foreground="#6c757d"/>
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header -->
+        <Border Grid.Row="0" Margin="0,0,0,24">
+            <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="Clientes" Classes="h1" Margin="0,0,0,4"/>
+                    <TextBlock Text="Gerenciamento centralizado da base de clientes" Classes="h3"/>
+                </StackPanel>
+                
+                <Button Grid.Column="1" Classes="primary" Command="{Binding ShowCreateCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Data="{StaticResource icon_add}" Width="18" Height="18" Foreground="White"/>
+                        <TextBlock Text="Adicionar Cliente" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Button Grid.Column="1" Content="+ Novo Cliente" Command="{Binding ShowCreateCommand}"
-                            Background="#007bff" Foreground="White" Padding="15,8"/>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <StackPanel Grid.Row="1" Spacing="24">
+            <!-- Search and Filter Bar -->
+            <Border Classes="card">
+                <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto">
+                    <TextBox Grid.Column="0" 
+                            Text="{Binding TermoBusca}" 
+                            Watermark="Buscar por nome, e-mail ou empresa..."
+                            Classes="search"
+                            VerticalAlignment="Center">
+                        <TextBox.InnerLeftContent>
+                            <PathIcon Data="{StaticResource icon_search}" Width="16" Height="16" Margin="12,0,0,0" Foreground="#64748b"/>
+                        </TextBox.InnerLeftContent>
+                    </TextBox>
+                    
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" Margin="16,0,0,0">
+                        <!-- Simplified filter placeholder as ComboBox isn't bound to enum in original if it was, I'd keep it -->
+                    </StackPanel>
                 </Grid>
             </Border>
 
-            <!-- Barra de Busca -->
-            <Border Background="White" CornerRadius="8" Padding="20">
-                <Grid ColumnDefinitions="*,Auto">
-                    <TextBox Grid.Column="0" Text="{Binding TermoBusca}" 
-                             Watermark="Buscar por nome, email ou empresa..."
-                             FontSize="14"/>
-                    <Button Grid.Column="1" Content="🔍" Margin="10,0,0,0" 
-                            Background="#6c757d" Foreground="White" Padding="10,8"/>
-                </Grid>
-            </Border>
-
-            <!-- Tabela de Clientes -->
-            <Border Background="White" CornerRadius="8" Padding="20">
-                <Grid>
-                    <!-- Header da Tabela -->
-                    <Border Height="50" VerticalAlignment="Top" Background="#f8f9fa" 
-                            BorderBrush="#dee2e6" BorderThickness="0,0,0,1">
-                        <Grid ColumnDefinitions="2*,2*,1*,2*,1*,Auto" Margin="15,0">
-                            <TextBlock Grid.Column="0" Text="Nome" FontWeight="Bold"/>
-                            <TextBlock Grid.Column="1" Text="Email" FontWeight="Bold"/>
-                            <TextBlock Grid.Column="2" Text="Telefone" FontWeight="Bold"/>
-                            <TextBlock Grid.Column="3" Text="Empresa" FontWeight="Bold"/>
-                            <TextBlock Grid.Column="4" Text="Status" FontWeight="Bold"/>
-                            <TextBlock Grid.Column="5" Text="Ações" FontWeight="Bold"/>
+            <!-- Table Card -->
+            <Border Classes="card" Padding="0" ClipToBounds="True">
+                <Grid RowDefinitions="Auto, *">
+                    <!-- Table Header -->
+                    <Border Grid.Row="0" Background="#f8fafc" BorderBrush="#f1f5f9" BorderThickness="0,0,0,1" Padding="24,16">
+                        <Grid ColumnDefinitions="2*, 2*, 1.5*, 2*, 1*, Auto">
+                            <TextBlock Grid.Column="0" Text="CLIENTE" FontWeight="Bold" FontSize="11" Foreground="#64748b" LetterSpacing="1"/>
+                            <TextBlock Grid.Column="1" Text="E-MAIL" FontWeight="Bold" FontSize="11" Foreground="#64748b" LetterSpacing="1"/>
+                            <TextBlock Grid.Column="2" Text="TELEFONE" FontWeight="Bold" FontSize="11" Foreground="#64748b" LetterSpacing="1"/>
+                            <TextBlock Grid.Column="3" Text="EMPRESA" FontWeight="Bold" FontSize="11" Foreground="#64748b" LetterSpacing="1"/>
+                            <TextBlock Grid.Column="4" Text="STATUS" FontWeight="Bold" FontSize="11" Foreground="#64748b" LetterSpacing="1"/>
+                            <TextBlock Grid.Column="5" Text="AÇÕES" FontWeight="Bold" FontSize="11" Foreground="#64748b" LetterSpacing="1" HorizontalAlignment="Center"/>
                         </Grid>
                     </Border>
 
-                    <!-- Lista de Clientes -->
-                    <ScrollViewer Margin="0,50,0,0">
+                    <!-- Table Body -->
+                    <ScrollViewer Grid.Row="1" MaxHeight="500">
                         <ItemsControl ItemsSource="{Binding ClientesFiltrados}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="0,0,0,1" Padding="15,10" Background="White"
-                                            BorderBrush="#dee2e6" BorderThickness="0,0,0,1">
-                                        <Grid ColumnDefinitions="2*,2*,1*,2*,1*,Auto">
-                                            <TextBlock Grid.Column="0" Text="{Binding Nome}" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding Email}" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="2" Text="{Binding Telefone}" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="3" Text="{Binding Empresa}" VerticalAlignment="Center"/>
-                                            <Border Grid.Column="4" Background="#28a745">
-                                                <TextBlock Text="{Binding Status}" Foreground="White" 
-                                                         HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                         FontSize="11" Padding="8,4"/>
+                                    <Border BorderBrush="#f1f5f9" BorderThickness="0,0,0,1">
+                                        <Grid ColumnDefinitions="2*, 2*, 1.5*, 2*, 1*, Auto" Margin="24,16">
+                                            <TextBlock Grid.Column="0" Text="{Binding Nome}" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#1e293b"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Email}" VerticalAlignment="Center" Foreground="#64748b"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding Telefone}" VerticalAlignment="Center" Foreground="#64748b"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding Empresa}" VerticalAlignment="Center" Foreground="#64748b"/>
+                                            
+                                            <Border Grid.Column="4" HorizontalAlignment="Left" VerticalAlignment="Center" CornerRadius="6" Padding="8,4" Background="#f1f5f9">
+                                                <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
                                             </Border>
-                                            <StackPanel Grid.Column="5" Orientation="Horizontal" Spacing="5">
-                                                <Button Content="✏️" Command="{Binding $parent[UserControl].DataContext.ShowEditCommand}"
-                                                        CommandParameter="{Binding}" Background="Transparent" Padding="5"/>
-                                                <Button Content="🗑️" Command="{Binding $parent[UserControl].DataContext.ShowDeleteCommand}"
-                                                        CommandParameter="{Binding}" Background="Transparent" Padding="5"/>
+
+                                            <StackPanel Grid.Column="5" Orientation="Horizontal" Spacing="8">
+                                                <Button Classes="icon" Command="{Binding $parent[UserControl].((vm:ClientesViewModel)DataContext).ShowEditCommand}" CommandParameter="{Binding}" ToolTip.Tip="Editar">
+                                                    <PathIcon Data="{StaticResource icon_edit}" Width="16" Height="16" Foreground="{StaticResource PrimaryColor}"/>
+                                                </Button>
+                                                <Button Classes="icon" Command="{Binding $parent[UserControl].((vm:ClientesViewModel)DataContext).ShowDeleteCommand}" CommandParameter="{Binding}" ToolTip.Tip="Excluir">
+                                                    <PathIcon Data="{StaticResource icon_delete}" Width="16" Height="16" Foreground="#ef4444"/>
+                                                </Button>
                                             </StackPanel>
                                         </Grid>
                                     </Border>
@@ -78,138 +92,96 @@
                         </ItemsControl>
                     </ScrollViewer>
 
-                    <!-- Mensagem quando não há clientes -->
-                    <TextBlock Text="Nenhum cliente encontrado" 
-                             IsVisible="{Binding ClientesFiltrados.Count, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=0}"
-                             HorizontalAlignment="Center" VerticalAlignment="Center" 
-                             Foreground="#6c757d" FontSize="16"/>
+                    <!-- Empty State -->
+                    <Grid Grid.Row="1" IsVisible="{Binding !ClientesFiltrados.Count}" Height="300">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="16">
+                            <PathIcon Data="{StaticResource icon_users}" Width="48" Height="48" Foreground="#e2e8f0"/>
+                            <TextBlock Text="Nenhum cliente encontrado" Classes="h3" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
             </Border>
         </StackPanel>
 
-        <!-- Loading Overlay -->
-        <Border Background="#80000000" IsVisible="{Binding IsLoading}" 
-                HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="Carregando..." Foreground="White" FontSize="16"/>
-            </StackPanel>
-        </Border>
+        <!-- Overlays (Dialogs) -->
+        <Panel Grid.RowSpan="2" IsVisible="{Binding IsLoading}" Background="#40000000">
+            <ProgressBar IsIndeterminate="True" Width="200" VerticalAlignment="Center"/>
+        </Panel>
 
-        <!-- Dialog de Criar Cliente -->
-        <Border Background="#80000000" IsVisible="{Binding ShowCreateDialog}" 
-                HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Border Background="White" CornerRadius="8" Padding="30" Width="400" Height="500"
-                    HorizontalAlignment="Center" VerticalAlignment="Center">
-                <StackPanel Spacing="20">
-                    <TextBlock Text="Novo Cliente" FontSize="20" FontWeight="Bold"/>
+        <Panel Grid.RowSpan="2" IsVisible="{Binding ShowCreateDialog}" Background="#80000000">
+            <Border Classes="card" Width="450" VerticalAlignment="Center" BoxShadow="0 10 30 0 #40000000">
+                <StackPanel Spacing="24">
+                    <TextBlock Text="Adicionar Novo Cliente" Classes="h2"/>
                     
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Nome *" FontWeight="Bold"/>
-                        <TextBox Text="{Binding Nome}" FontSize="14"/>
+                    <StackPanel Spacing="16">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Nome Completo" FontWeight="SemiBold" FontSize="12" Foreground="#64748b"/>
+                            <TextBox Text="{Binding Nome}" Watermark="Ex: Jackson Wendel"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="E-mail" FontWeight="SemiBold" FontSize="12" Foreground="#64748b"/>
+                            <TextBox Text="{Binding Email}" Watermark="exemplo@email.com"/>
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="*, *">
+                            <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+                                <TextBlock Text="Telefone" FontWeight="SemiBold" FontSize="12" Foreground="#64748b"/>
+                                <TextBox Text="{Binding Telefone}" Watermark="(00) 00000-0000"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="6" Margin="8,0,0,0">
+                                <TextBlock Text="Empresa" FontWeight="SemiBold" FontSize="12" Foreground="#64748b"/>
+                                <TextBox Text="{Binding Empresa}" Watermark="Nome da empresa"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Status Inicial" FontWeight="SemiBold" FontSize="12" Foreground="#64748b"/>
+                            <ComboBox HorizontalAlignment="Stretch" SelectedItem="{Binding Status}">
+                                <ComboBoxItem Content="Prospecto"/>
+                                <ComboBoxItem Content="Ativo"/>
+                                <ComboBoxItem Content="Inativo"/>
+                                <ComboBoxItem Content="Cancelado"/>
+                            </ComboBox>
+                        </StackPanel>
                     </StackPanel>
 
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Email *" FontWeight="Bold"/>
-                        <TextBox Text="{Binding Email}" FontSize="14"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Telefone" FontWeight="Bold"/>
-                        <TextBox Text="{Binding Telefone}" FontSize="14"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Empresa" FontWeight="Bold"/>
-                        <TextBox Text="{Binding Empresa}" FontSize="14"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Status" FontWeight="Bold"/>
-                        <ComboBox SelectedItem="{Binding Status}" FontSize="14">
-                            <ComboBoxItem Content="Prospecto"/>
-                            <ComboBoxItem Content="Ativo"/>
-                            <ComboBoxItem Content="Inativo"/>
-                            <ComboBoxItem Content="Cancelado"/>
-                        </ComboBox>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
-                        <Button Content="Cancelar" Command="{Binding CancelDialogCommand}" 
-                                Background="#6c757d" Foreground="White" Padding="15,8"/>
-                        <Button Content="Salvar" Command="{Binding CreateClienteCommand}" 
-                                Background="#007bff" Foreground="White" Padding="15,8"/>
-                    </StackPanel>
+                    <Grid ColumnDefinitions="*, *" Margin="0,8,0,0">
+                        <Button Grid.Column="0" Content="Cancelar" Command="{Binding CancelDialogCommand}" HorizontalAlignment="Stretch" Margin="0,0,6,0"/>
+                        <Button Grid.Column="1" Classes="primary" Content="Salvar Cliente" Command="{Binding CreateClienteCommand}" HorizontalAlignment="Stretch" Margin="6,0,0,0"/>
+                    </Grid>
                 </StackPanel>
             </Border>
-        </Border>
+        </Panel>
 
-        <!-- Dialog de Editar Cliente -->
-        <Border Background="#80000000" IsVisible="{Binding ShowEditDialog}" 
-                HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Border Background="White" CornerRadius="8" Padding="30" Width="400" Height="500"
-                    HorizontalAlignment="Center" VerticalAlignment="Center">
-                <StackPanel Spacing="20">
-                    <TextBlock Text="Editar Cliente" FontSize="20" FontWeight="Bold"/>
+        <!-- Confirmation Dialog for Delete -->
+        <Panel Grid.RowSpan="2" IsVisible="{Binding ShowDeleteDialog}" Background="#80000000">
+            <Border Classes="card" Width="400" VerticalAlignment="Center">
+                <StackPanel Spacing="24">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Excluir Cliente" Classes="h2" Foreground="#ef4444"/>
+                        <TextBlock Text="Esta ação não pode ser desfeita. Tem certeza que deseja remover este cliente da base de dados?" TextWrapping="Wrap" Classes="h3"/>
+                    </StackPanel>
                     
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Nome *" FontWeight="Bold"/>
-                        <TextBox Text="{Binding Nome}" FontSize="14"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Email *" FontWeight="Bold"/>
-                        <TextBox Text="{Binding Email}" FontSize="14"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Telefone" FontWeight="Bold"/>
-                        <TextBox Text="{Binding Telefone}" FontSize="14"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Empresa" FontWeight="Bold"/>
-                        <TextBox Text="{Binding Empresa}" FontSize="14"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Status" FontWeight="Bold"/>
-                        <ComboBox SelectedItem="{Binding Status}" FontSize="14">
-                            <ComboBoxItem Content="Prospecto"/>
-                            <ComboBoxItem Content="Ativo"/>
-                            <ComboBoxItem Content="Inativo"/>
-                            <ComboBoxItem Content="Cancelado"/>
-                        </ComboBox>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
-                        <Button Content="Cancelar" Command="{Binding CancelDialogCommand}" 
-                                Background="#6c757d" Foreground="White" Padding="15,8"/>
-                        <Button Content="Salvar" Command="{Binding UpdateClienteCommand}" 
-                                Background="#007bff" Foreground="White" Padding="15,8"/>
-                    </StackPanel>
+                    <Grid ColumnDefinitions="*, *">
+                        <Button Grid.Column="0" Content="Manter Cliente" Command="{Binding CancelDialogCommand}" HorizontalAlignment="Stretch" Margin="0,0,6,0"/>
+                        <Button Grid.Column="1" Classes="primary" Background="#ef4444" Content="Confirmar Exclusão" Command="{Binding DeleteClienteCommand}" HorizontalAlignment="Stretch" Margin="6,0,0,0"/>
+                    </Grid>
                 </StackPanel>
             </Border>
-        </Border>
-
-        <!-- Dialog de Confirmar Exclusão -->
-        <Border Background="#80000000" IsVisible="{Binding ShowDeleteDialog}" 
-                HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Border Background="White" CornerRadius="8" Padding="30" Width="400" Height="200"
-                    HorizontalAlignment="Center" VerticalAlignment="Center">
-                <StackPanel Spacing="20">
-                    <TextBlock Text="Confirmar Exclusão" FontSize="20" FontWeight="Bold"/>
-                    <TextBlock Text="Tem certeza que deseja excluir este cliente?" 
-                             TextWrapping="Wrap" Foreground="#6c757d"/>
-                    
-                    <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
-                        <Button Content="Cancelar" Command="{Binding CancelDialogCommand}" 
-                                Background="#6c757d" Foreground="White" Padding="15,8"/>
-                        <Button Content="Excluir" Command="{Binding DeleteClienteCommand}" 
-                                Background="#dc3545" Foreground="White" Padding="15,8"/>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-        </Border>
+        </Panel>
     </Grid>
 
+    <UserControl.Styles>
+        <Style Selector="Button.icon">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="CornerRadius" Value="6"/>
+        </Style>
+        <Style Selector="Button.icon:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#f1f5f9"/>
+        </Style>
+    </UserControl.Styles>
 </UserControl> 
+ 

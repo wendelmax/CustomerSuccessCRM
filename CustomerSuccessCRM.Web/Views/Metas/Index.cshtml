@@ -7,53 +7,53 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span class="icon-target"></span>
-                    Lista de Metas
-                </h3>
+            <div class="card-header d-flex justify-content-between align-items-center py-3">
+                <div class="d-flex align-items-center">
+                    <span class="material-symbols-rounded mr-2 text-primary">target</span>
+                    <h3 class="card-title">Gestão de Metas</h3>
+                </div>
                 <div class="card-tools">
-                    <a asp-action="Create" class="btn btn-primary btn-sm">
-                        <span class="icon-target"></span> Nova Meta
+                    <a asp-action="Create" class="btn btn-primary d-flex align-items-center">
+                        <span class="material-symbols-rounded mr-1" style="font-size: 20px;">task_alt</span> 
+                        Nova Meta
                     </a>
                 </div>
             </div>
             <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
+                <div class="row mb-4 align-items-end">
+                    <div class="col-md-5">
+                        <label class="small font-weight-bold text-muted text-uppercase mb-2">Buscar objetivo</label>
                         <div class="input-group">
-                            <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome...">
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-default">
-                                    <span class="icon-search"></span>
-                                </button>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-transparent border-right-0">
+                                    <span class="material-symbols-rounded text-muted" style="font-size: 20px;">search</span>
+                                </span>
                             </div>
+                            <input type="text" id="searchInput" class="form-control border-left-0 pl-0" placeholder="Nome da meta ou descrição...">
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="float-right">
-                            <select id="statusFilter" class="form-control form-control-sm">
-                                <option value="">Todos os Status</option>
-                                <option value="EmAndamento">Em Andamento</option>
-                                <option value="Concluida">Concluída</option>
-                                <option value="Atrasada">Atrasada</option>
-                                <option value="Cancelada">Cancelada</option>
-                            </select>
-                        </div>
+                    <div class="col-md-3">
+                        <label class="small font-weight-bold text-muted text-uppercase mb-2">Status</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">Todos os Status</option>
+                            <option value="EmAndamento">Em Andamento</option>
+                            <option value="Concluida">Concluída</option>
+                            <option value="Atrasada">Atrasada</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="table-responsive">
-                    <table id="metasTable" class="table table-bordered table-striped">
+                    <table id="metasTable" class="table table-hover border-0 shadow-none">
                         <thead>
                             <tr>
-                                <th>Nome</th>
-                                <th>Descrição</th>
-                                <th>Valor</th>
-                                <th>Progresso</th>
-                                <th>Data Fim</th>
-                                <th>Status</th>
-                                <th>Ações</th>
+                                <th class="border-top-0">Meta</th>
+                                <th class="border-top-0">Valor</th>
+                                <th class="border-top-0">Progresso</th>
+                                <th class="border-top-0">Prazo</th>
+                                <th class="border-top-0">Status</th>
+                                <th class="border-top-0 text-right">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,19 +61,33 @@
                             {
                                 <tr>
                                     <td>
-                                        <strong>@item.Nome</strong>
+                                        <div class="font-weight-600 text-dark">@item.Nome</div>
+                                        <div class="small text-muted">@item.Descricao</div>
                                     </td>
-                                    <td>@item.Descricao</td>
-                                    <td>R$ @item.Valor.ToString("N2")</td>
                                     <td>
-                                        <div class="progress">
-                                            <div class="progress-bar @(item.Progresso >= 100 ? "bg-success" : item.Progresso >= 70 ? "bg-info" : item.Progresso >= 40 ? "bg-warning" : "bg-danger")" 
-                                                 style="width: @(Math.Min(item.Progresso, 100))%">
-                                                @item.Progresso.ToString("N1")%
+                                        <div class="font-weight-600 text-dark">R$ @item.Valor.ToString("N2")</div>
+                                    </td>
+                                    <td style="min-width: 150px;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress flex-grow-1" style="height: 6px; border-radius: 3px;">
+                                                @{
+                                                    var barClass = item.Progresso >= 100 ? "bg-success" : 
+                                                                  item.Progresso >= 70 ? "bg-info" : 
+                                                                  item.Progresso >= 40 ? "bg-warning" : "bg-danger";
+                                                }
+                                                <div class="progress-bar @barClass" 
+                                                     style="width: @(Math.Min(item.Progresso, 100))%">
+                                                </div>
                                             </div>
+                                            <span class="ml-2 small font-weight-bold text-muted">@item.Progresso.ToString("N0")%</span>
                                         </div>
                                     </td>
-                                    <td>@item.DataFim.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        <div class="small font-weight-500 text-muted">
+                                            <span class="material-symbols-rounded align-bottom" style="font-size: 16px;">calendar_today</span>
+                                            @item.DataFim.ToString("dd/MM/yyyy")
+                                        </div>
+                                    </td>
                                     <td>
                                         @{
                                             var badgeClass = item.Status switch
@@ -85,18 +99,18 @@
                                                 _ => "badge-secondary"
                                             };
                                         }
-                                        <span class="badge @badgeClass">@item.Status</span>
+                                        <span class="badge @badgeClass px-3 py-2" style="border-radius: 6px;">@item.Status</span>
                                     </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Editar">
-                                                <span class="icon-edit"></span>
+                                    <td class="text-right">
+                                        <div class="btn-group shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-white btn-sm px-3" title="Editar">
+                                                <span class="material-symbols-rounded text-primary" style="font-size: 18px;">edit</span>
                                             </a>
-                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary" title="Detalhes">
-                                                <span class="icon-eye"></span>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-white btn-sm px-3" title="Detalhes">
+                                                <span class="material-symbols-rounded text-info" style="font-size: 18px;">visibility</span>
                                             </a>
-                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" title="Excluir">
-                                                <span class="icon-trash"></span>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-white btn-sm px-3" title="Excluir">
+                                                <span class="material-symbols-rounded text-danger" style="font-size: 18px;">delete</span>
                                             </a>
                                         </div>
                                     </td>
@@ -108,12 +122,15 @@
 
                 @if (!Model.Any())
                 {
-                    <div class="text-center py-4">
-                        <span class="icon-target" style="font-size: 3rem; color: #ccc;"></span>
-                        <h5 class="text-muted">Nenhuma meta encontrada</h5>
-                        <p class="text-muted">Comece criando sua primeira meta.</p>
-                        <a asp-action="Create" class="btn btn-primary">
-                            <span class="icon-target"></span> Criar Meta
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <span class="material-symbols-rounded text-muted" style="font-size: 4rem; opacity: 0.3;">flag</span>
+                        </div>
+                        <h5 class="text-dark font-weight-bold">Sem metas ativas</h5>
+                        <p class="text-muted mb-4">Que tal definir um novo objetivo agora?</p>
+                        <a asp-action="Create" class="btn btn-primary px-4">
+                            <span class="material-symbols-rounded mr-1" style="font-size: 20px;">task_alt</span> 
+                            Criar Meta
                         </a>
                     </div>
                 }
@@ -128,43 +145,49 @@
             var table = $('#metasTable').DataTable({
                 "responsive": true,
                 "autoWidth": false,
+                "dom": '<"top"i>rt<"bottom"lp><"clear">',
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
                 },
-                "order": [[0, "asc"]],
+                "order": [[3, "asc"]],
                 "columnDefs": [
-                    { "orderable": false, "targets": 6 }
+                    { "orderable": false, "targets": 5 }
                 ]
             });
 
-            // Filtro de busca personalizado
             $('#searchInput').on('keyup', function () {
                 table.search(this.value).draw();
             });
 
-            // Filtro de status personalizado
             $('#statusFilter').on('change', function () {
                 var status = $(this).val();
-                table.column(5).search(status).draw();
+                table.column(4).search(status).draw();
             });
         });
     </script>
 }
 
 <style>
-    .icon-search::before { content: "🔍"; }
-    .icon-edit::before { content: "✏️"; }
-    .icon-eye::before { content: "👁️"; }
-    .icon-trash::before { content: "🗑️"; }
-    
-    .progress {
-        height: 20px;
-        margin-bottom: 0;
+    .btn-white {
+        background: #fff;
+        border: 1px solid #f1f5f9;
     }
-    
-    .progress-bar {
-        line-height: 20px;
-        font-size: 12px;
-        font-weight: bold;
+    .btn-white:hover {
+        background: #f8fafc;
     }
-</style> 
+    table.dataTable thead th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 1.25rem 1rem;
+    }
+    .table td {
+        vertical-align: middle;
+        padding: 1.25rem 1rem;
+        border-top: 1px solid #f1f5f9;
+    }
+</style>
+ 

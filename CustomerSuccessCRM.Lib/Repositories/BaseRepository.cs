@@ -3,13 +3,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CustomerSuccessCRM.Lib.Repositories
 {
-    public abstract class BaseRepository : IBaseRepository
+    public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
     {
         protected readonly CrmDbContext _context;
+        protected readonly DbSet<T> _dbSet;
 
-        protected BaseRepository(CrmDbContext context, string nomeEntidade)
+        protected BaseRepository(CrmDbContext context)
         {
             _context = context;
+            _dbSet = context.Set<T>();
         }
 
         public virtual async Task<bool> SaveChangesAsync()
@@ -19,26 +21,28 @@ namespace CustomerSuccessCRM.Lib.Repositories
 
         public virtual async Task<bool> ExisteAsync(int id)
         {
-            // Implementação específica deve ser feita nas classes filhas
-            return false;
+            return await _dbSet.FindAsync(id) != null;
         }
 
-        public virtual async Task<bool> AdicionarAsync(object entidade)
+        public virtual async Task<bool> AdicionarAsync(T entidade)
         {
-            // Implementação específica deve ser feita nas classes filhas
-            return false;
+            await _dbSet.AddAsync(entidade);
+            return await SaveChangesAsync();
         }
 
-        public virtual async Task<bool> AtualizarAsync(object entidade)
+        public virtual async Task<bool> AtualizarAsync(T entidade)
         {
-            // Implementação específica deve ser feita nas classes filhas
-            return false;
+            _dbSet.Update(entidade);
+            return await SaveChangesAsync();
         }
 
         public virtual async Task<bool> DeletarAsync(int id)
         {
-            // Implementação específica deve ser feita nas classes filhas
-            return false;
+            var entidade = await _dbSet.FindAsync(id);
+            if (entidade == null) return false;
+
+            _dbSet.Remove(entidade);
+            return await SaveChangesAsync();
         }
     }
 } 

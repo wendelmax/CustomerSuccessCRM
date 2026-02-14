@@ -3,81 +3,100 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:CustomerSuccessCRM.Desktop.ViewModels.Produtos"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
              x:Class="CustomerSuccessCRM.Desktop.Views.Produtos.ProdutosView"
              x:DataType="vm:ProdutosViewModel">
-    
-    <Grid>
-        <Grid RowDefinitions="Auto,*">
-            <!-- Header -->
-            <StackPanel Grid.Row="0" Margin="20">
-                <TextBlock Text="Produtos" Classes="h2"/>
-                <TextBlock Text="Gerencie seu catálogo de produtos" Classes="h3" Margin="0,5,0,0"/>
-            </StackPanel>
 
-            <!-- Content -->
-            <Border Grid.Row="1" Classes="card" Margin="20">
-                <Grid RowDefinitions="Auto,*">
-                    <!-- Toolbar -->
-                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,20">
-                        <TextBox Grid.Column="0" 
-                                Text="{Binding SearchTerm}"
-                                Watermark="Buscar produtos..."
-                                Margin="0,0,10,0"/>
-                        
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                            <Button Command="{Binding SearchCommand}">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <PathIcon Data="{StaticResource search_regular}"/>
-                                    <TextBlock Text="Buscar"/>
-                                </StackPanel>
-                            </Button>
-                            
-                            <Button Command="{Binding StartAddCommand}">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <PathIcon Data="{StaticResource add_regular}"/>
-                                    <TextBlock Text="Novo Produto"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header -->
+        <Border Grid.Row="0" Margin="0,0,0,24">
+            <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="Produtos" Classes="h1" Margin="0,0,0,4"/>
+                    <TextBlock Text="Catálogo de produtos e controle de inventário" Classes="h3"/>
+                </StackPanel>
+                
+                <Button Grid.Column="1" Classes="primary" IsVisible="{Binding !IsEditing}" Command="{Binding StartAddCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Data="{StaticResource icon_package}" Width="18" Height="18" Foreground="White"/>
+                        <TextBlock Text="Novo Produto" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
 
-                    <!-- Data Grid -->
-                    <DataGrid Grid.Row="1"
-                              ItemsSource="{Binding Produtos}"
+        <!-- Main Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="*, Auto">
+            <!-- List Column -->
+            <StackPanel Grid.Column="0" Spacing="24">
+                <!-- Search Bar -->
+                <Border Classes="card">
+                    <TextBox Text="{Binding SearchTerm}" 
+                            Watermark="Buscar produto por nome ou descrição..."
+                            Classes="search">
+                        <TextBox.InnerLeftContent>
+                            <PathIcon Data="{StaticResource icon_search}" Width="16" Height="16" Margin="12,0,0,0" Foreground="#64748b"/>
+                        </TextBox.InnerLeftContent>
+                    </TextBox>
+                </Border>
+
+                <!-- DataGrid Card -->
+                <Border Classes="card" Padding="0" ClipToBounds="True">
+                    <DataGrid ItemsSource="{Binding Produtos}"
+                              SelectedItem="{Binding SelectedProduto}"
                               AutoGenerateColumns="False"
                               IsReadOnly="True"
-                              GridLinesVisibility="All">
+                              GridLinesVisibility="Horizontal"
+                              BorderThickness="0"
+                              Background="Transparent">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Nome" 
-                                              Binding="{Binding Nome}" 
-                                              Width="*"/>
-                            <DataGridTextColumn Header="Descrição" 
-                                              Binding="{Binding Descricao}" 
-                                              Width="2*"/>
-                            <DataGridTextColumn Header="Preço" 
-                                              Binding="{Binding PrecoBase, StringFormat=C}" 
-                                              Width="*"/>
-                            <DataGridTemplateColumn Header="Ações" Width="Auto">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Spacing="5">
-                                            <Button Command="{Binding $parent[UserControl].((vm:ProdutosViewModel)DataContext).StartEditCommand}"
-                                                    CommandParameter="{Binding}">
-                                                <PathIcon Data="{StaticResource edit_regular}"/>
-                                            </Button>
-                                            <Button Command="{Binding $parent[UserControl].((vm:ProdutosViewModel)DataContext).DeleteCommand}"
-                                                    CommandParameter="{Binding}">
-                                                <PathIcon Data="{StaticResource delete_regular}"/>
-                                            </Button>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTextColumn Header="PRODUTO" Binding="{Binding Nome}" Width="*"/>
+                            
+                            <DataGridTemplateColumn Header="CATEGORIA" Width="130">
+                                <DataTemplate>
+                                    <Border HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                            CornerRadius="6" Padding="8,4" Background="#f1f5f9" Margin="12,0">
+                                        <TextBlock Text="{Binding Categoria}" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="PREÇO" Width="130">
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding PrecoBase, StringFormat='R$ {0:N2}'}" 
+                                             VerticalAlignment="Center" FontWeight="SemiBold" Margin="12,0"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="ESTOQUE" Width="110">
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding QuantidadeEstoque, StringFormat='{}{0} un.'}" 
+                                             VerticalAlignment="Center" Margin="12,0"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="STATUS" Width="100">
+                                <DataTemplate>
+                                    <Border HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                            CornerRadius="6" Padding="8,4" Background="#f1f5f9" Margin="12,0">
+                                        <TextBlock Text="{Binding Ativo, StringFormat='{}{0}'}" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="AÇÕES" Width="Auto">
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="4" Margin="4,0" HorizontalAlignment="Center">
+                                        <Button Classes="icon" Command="{Binding $parent[UserControl].((vm:ProdutosViewModel)DataContext).DeleteCommand}" CommandParameter="{Binding}">
+                                            <PathIcon Data="{StaticResource icon_delete}" Width="16" Height="16" Foreground="#ef4444"/>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                </Grid>
-            </Border>
+                </Border>
+            </StackPanel>
         </Grid>
 
         <!-- Edit Dialog -->
@@ -107,10 +126,10 @@
                     </StackPanel>
 
                     <TextBlock Text="{Binding ErrorMessage}"
-                              IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                              Foreground="Red"
-                              TextWrapping="Wrap"
-                              Margin="0,10,0,0"/>
+                               IsVisible="{Binding ErrorMessage}"
+                               Foreground="Red"
+                               TextWrapping="Wrap"
+                               Margin="0,10,0,0"/>
                 </StackPanel>
             </Border>
         </Panel>

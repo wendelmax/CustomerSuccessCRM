@@ -6,152 +6,204 @@
 
 <style>
     .info-box {
-        min-height: 100px;
+        min-height: 120px;
         background: #fff;
         width: 100%;
-        box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
-        border-radius: 0.25rem;
-        margin-bottom: 1rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 1.5rem;
         display: flex;
-        cursor: pointer;
-        transition: all .3s ease;
+        align-items: center;
+        padding: 1rem;
+        border: 1px solid #f1f5f9;
+        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
 
     .info-box:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 2px 5px rgba(0,0,0,.2);
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        border-color: var(--primary-color);
     }
 
     .info-box-icon {
-        width: 80px;
-        font-size: 2rem;
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-right: 1.25rem;
+    }
+
+    .info-box-icon .material-symbols-rounded {
+        font-size: 28px;
+        color: #fff;
     }
 
     .info-box-content {
-        padding: 1rem;
         flex: 1;
     }
 
     .info-box-number {
         display: block;
-        font-weight: bold;
-        font-size: 1.5rem;
+        font-weight: 700;
+        font-size: 1.75rem;
+        color: #0f172a;
+        line-height: 1;
+        margin-bottom: 0.25rem;
     }
 
     .info-box-text {
         display: block;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        text-transform: uppercase;
-        font-size: 0.9rem;
-        color: #666;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #64748b;
+        text-transform: none;
     }
 
+    .bg-gradient-blue { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+    .bg-gradient-green { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+    .bg-gradient-orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+    .bg-gradient-red { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+
     .card {
-        margin-bottom: 1rem;
-        box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+        border-radius: var(--border-radius);
+        border: 1px solid #f1f5f9;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        background-color: #fff;
     }
 
     .card-header {
-        background-color: transparent;
-        border-bottom: 1px solid rgba(0,0,0,.125);
-        padding: 0.75rem 1.25rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+        padding: 1.25rem;
+        background: transparent;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
     }
 
     .valor-meta {
         font-size: 2.5rem;
-        font-weight: 300;
-        color: #007bff;
-        margin: 1rem 0;
+        font-weight: 700;
+        color: #1e293b;
+        letter-spacing: -0.025em;
     }
 
     .status-meta {
-        padding: 1rem;
-        border-radius: 0.25rem;
+        padding: 1.25rem;
+        border-radius: 12px;
         text-align: center;
-        margin-bottom: 1rem;
     }
 
-    .status-meta.concluida {
-        background-color: #28a745;
-        color: white;
+    .status-meta h4 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.025em;
     }
 
-    .status-meta.andamento {
-        background-color: #ffc107;
-        color: #000;
+    .status-meta h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
     }
 
-    .table th {
-        border-top: none;
+    .status-meta.concluida { background-color: #f0fdf4; color: #166534; }
+    .status-meta.andamento { background-color: #fffbeb; color: #92400e; }
+
+    .btn-view-all {
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        transition: color 0.2s;
+    }
+
+    .btn-view-all:hover {
+        color: var(--primary-hover);
     }
 
     .produto-item {
-        padding: 1rem;
-        border-bottom: 1px solid #f4f4f4;
+        padding: 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background-color 0.2s;
     }
 
-    .produto-item:last-child {
-        border-bottom: none;
+    .produto-item:hover {
+        background-color: #f8fafc;
     }
 
     .produto-nome {
         font-weight: 600;
-        margin-bottom: 0.25rem;
+        color: #1e293b;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .produto-preco {
-        float: right;
-        color: #28a745;
+        color: #16a34a;
+        font-size: 0.9rem;
     }
 
     .produto-descricao {
-        color: #666;
-        font-size: 0.9rem;
+        color: #64748b;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
     }
 </style>
 
 <div class="row">
     <div class="col-12 col-sm-6 col-md-3">
         <div class="info-box">
-            <div class="info-box-icon bg-info">👥</div>
+            <div class="info-box-icon bg-gradient-blue">
+                <span class="material-symbols-rounded">group</span>
+            </div>
             <div class="info-box-content">
-                <span class="info-box-text">Clientes</span>
                 <span class="info-box-number">@Model.TotalClientes</span>
+                <span class="info-box-text">Clientes Totais</span>
             </div>
         </div>
     </div>
     <div class="col-12 col-sm-6 col-md-3">
         <div class="info-box">
-            <div class="info-box-icon bg-success">🎯</div>
+            <div class="info-box-icon bg-gradient-green">
+                <span class="material-symbols-rounded">track_changes</span>
+            </div>
             <div class="info-box-content">
-                <span class="info-box-text">Metas</span>
                 <span class="info-box-number">@Model.TotalMetas</span>
+                <span class="info-box-text">Metas Ativas</span>
             </div>
         </div>
     </div>
     <div class="col-12 col-sm-6 col-md-3">
         <div class="info-box">
-            <div class="info-box-icon bg-warning">💬</div>
+            <div class="info-box-icon bg-gradient-orange">
+                <span class="material-symbols-rounded">chat_bubble</span>
+            </div>
             <div class="info-box-content">
-                <span class="info-box-text">Interações</span>
                 <span class="info-box-number">@Model.TotalInteracoes</span>
+                <span class="info-box-text">Interações Recentes</span>
             </div>
         </div>
     </div>
     <div class="col-12 col-sm-6 col-md-3">
         <div class="info-box">
-            <div class="info-box-icon bg-danger">📦</div>
+            <div class="info-box-icon bg-gradient-red">
+                <span class="material-symbols-rounded">inventory_2</span>
+            </div>
             <div class="info-box-content">
-                <span class="info-box-text">Produtos</span>
                 <span class="info-box-number">@Model.TotalProdutos</span>
+                <span class="info-box-text">Produtos em Linha</span>
             </div>
         </div>
     </div>
@@ -159,24 +211,28 @@
 
 <div class="row">
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <span class="icon-chart"></span>
-                <h3 class="card-title">Valor das Metas</h3>
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <span class="material-symbols-rounded mr-2 text-primary">payments</span>
+                    <h3 class="card-title">Receita Planejada</h3>
+                </div>
             </div>
-            <div class="card-body text-center">
-                <div class="valor-meta">
+            <div class="card-body d-flex flex-column justify-content-center text-center">
+                <div class="valor-meta mb-1">
                     R$ @Model.ValorTotalMetas.ToString("N2")
                 </div>
-                <p class="text-muted">Valor total das metas ativas</p>
+                <p class="text-muted mb-0">Volume total das metas em aberto</p>
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="card">
+        <div class="card h-100">
             <div class="card-header">
-                <span class="icon-target"></span>
-                <h3 class="card-title">Status das Metas</h3>
+                <div class="d-flex align-items-center">
+                    <span class="material-symbols-rounded mr-2 text-primary">monitoring</span>
+                    <h3 class="card-title">Performance de Metas</h3>
+                </div>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -188,7 +244,7 @@
                     </div>
                     <div class="col-6">
                         <div class="status-meta andamento">
-                            <h4>Em Andamento</h4>
+                            <h4>Andamento</h4>
                             <h2>@Model.MetasEmAndamento</h2>
                         </div>
                     </div>
@@ -198,16 +254,21 @@
     </div>
 </div>
 
-<div class="row">
+<div class="row mt-4">
     <div class="col-md-8">
         <div class="card">
-            <div class="card-header">
-                <span class="icon-users"></span>
-                <h3 class="card-title">Clientes Recentes</h3>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <span class="material-symbols-rounded mr-2 text-primary">recent_actors</span>
+                    <h3 class="card-title">Clientes Recentes</h3>
+                </div>
+                <a asp-controller="Clientes" asp-action="Index" class="btn-view-all">
+                    Ver Todos <span class="material-symbols-rounded" style="font-size: 18px;">chevron_right</span>
+                </a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table mb-0 border-0 shadow-none">
                         <thead>
                             <tr>
                                 <th>Nome</th>
@@ -222,9 +283,9 @@
                                 @foreach (var cliente in Model.ClientesRecentes.Take(5))
                                 {
                                     <tr>
-                                        <td>@cliente.Nome</td>
+                                        <td class="font-weight-600">@cliente.Nome</td>
                                         <td>@cliente.Empresa</td>
-                                        <td>@cliente.Email</td>
+                                        <td class="text-muted">@cliente.Email</td>
                                         <td>
                                             @if (cliente.Status == StatusCliente.Ativo)
                                             {
@@ -249,25 +310,22 @@
                             else
                             {
                                 <tr>
-                                    <td colspan="4" class="text-center">Nenhum cliente encontrado</td>
+                                    <td colspan="4" class="text-center py-4">Nenhum cliente disponível</td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="card-footer">
-                <a asp-controller="Clientes" asp-action="Index" class="btn btn-sm btn-primary float-right">
-                    Ver Todos os Clientes
-                </a>
-            </div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="card">
-            <div class="card-header">
-                <span class="icon-box"></span>
-                <h3 class="card-title">Produtos Mais Vendidos</h3>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <span class="material-symbols-rounded mr-2 text-primary">celebration</span>
+                    <h3 class="card-title">Top Produtos</h3>
+                </div>
             </div>
             <div class="card-body p-0">
                 @if (Model.ProdutosMaisVendidos != null && Model.ProdutosMaisVendidos.Any())
@@ -276,7 +334,7 @@
                     {
                         <div class="produto-item">
                             <div class="produto-nome">
-                                @produto.Nome
+                                <span>@produto.Nome</span>
                                 <span class="produto-preco">R$ @produto.PrecoBase.ToString("N2")</span>
                             </div>
                             <div class="produto-descricao">@produto.Descricao</div>
@@ -285,16 +343,17 @@
                 }
                 else
                 {
-                    <div class="produto-item text-center">
-                        Nenhum produto encontrado
+                    <div class="produto-item text-center py-4">
+                        Sem dados disponíveis
                     </div>
                 }
             </div>
-            <div class="card-footer text-center">
-                <a asp-controller="Produtos" asp-action="Index" class="btn btn-sm btn-primary">
-                    Ver Todos os Produtos
+            <div class="card-footer bg-transparent border-0 text-center pb-4">
+                <a asp-controller="Produtos" asp-action="Index" class="btn-view-all">
+                    Lista Completa <span class="material-symbols-rounded" style="font-size: 18px;">chevron_right</span>
                 </a>
             </div>
         </div>
     </div>
-</div> 
+</div>
+ 
